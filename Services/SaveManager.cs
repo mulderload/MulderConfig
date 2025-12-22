@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace MulderLauncher.Services
 {
-    public class SaveManager(FormStateManager formStateManager)
+    public class SaveManager(ConfigProvider configProvider, FileActionManager fileActionManager, FormStateManager formStateManager)
     {
         private Dictionary<string, Dictionary<string, object>>? saves;
 
@@ -82,6 +82,16 @@ namespace MulderLauncher.Services
 
             string json = JsonConvert.SerializeObject(saves, Formatting.Indented);
             File.WriteAllText(GetSavePath(), json);
+
+            var config = configProvider.GetConfig();
+            var selected = formStateManager.GetChoices();
+            selected["Addon"] = formStateManager.GetAddon();
+
+            if (config.Actions.FileOperations != null)
+                fileActionManager.ExecuteFileOperations(config.Actions.FileOperations, selected);
+
+            if (config.Actions.FileEdits != null)
+                fileActionManager.ExecuteFileEdits(config.Actions.FileEdits, selected);
         }
     }
 }

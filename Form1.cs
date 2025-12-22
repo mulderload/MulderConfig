@@ -7,6 +7,7 @@ namespace MulderLauncher
         private readonly int? steamAddonId;
         private readonly ConfigProvider configProvider = new();
         private readonly ExeWrapper exeWrapper;
+        private readonly FileActionManager fileActionManager = new();
         private readonly FormBuilder formBuilder;
         private readonly FormValidator formValidator;
         private readonly FormStateManager formStateManager;
@@ -21,7 +22,7 @@ namespace MulderLauncher
             formValidator = new(configProvider, formStateManager);
             formBuilder = new(formValidator, formStateManager);
             launchManager = new(configProvider, formStateManager);
-            saveManager = new(formStateManager);
+            saveManager = new(configProvider, fileActionManager, formStateManager);
 
             InitializeComponent();
         }
