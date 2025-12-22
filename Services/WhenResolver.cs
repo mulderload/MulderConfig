@@ -35,8 +35,16 @@ namespace MulderLauncher.Services
                     return false;
                 }
 
+                // Clé absente: 
+                // - Equals / Contains => ne peut pas matcher
+                // - NotEquals / NotContains => considéré comme vrai ("différent" / "ne contient pas")
                 if (selectedValue == null)
+                {
+                    if (op == Op.NotEquals || op == Op.NotContains)
+                        continue;
+
                     return false;
+                }
 
                 if (!IsValueMatch(selectedValue, expected, op))
                     return false;

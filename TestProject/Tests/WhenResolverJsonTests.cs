@@ -196,5 +196,65 @@ namespace TestProject.Tests
 
             Assert.False(WhenResolver.Match(when, selected));
         }
+
+        [Fact]
+        public void MissingKey_Equals_Fails()
+        {
+            var json = @"{ ""when"": [ { ""Renderer"": ""DXVK"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Resolution", "1920x1080"));
+
+            Assert.False(WhenResolver.Match(when, selected));
+        }
+
+        [Fact]
+        public void MissingKey_Contains_Fails()
+        {
+            var json = @"{ ""when"": [ { ""*Renderer"": ""DX"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Resolution", "1920x1080"));
+
+            Assert.False(WhenResolver.Match(when, selected));
+        }
+
+        [Fact]
+        public void MissingKey_NotEquals_Succeeds()
+        {
+            var json = @"{ ""when"": [ { ""!Renderer"": ""DXVK"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Resolution", "1920x1080"));
+
+            Assert.True(WhenResolver.Match(when, selected));
+        }
+
+        [Fact]
+        public void MissingKey_NotContains_Succeeds()
+        {
+            var json = @"{ ""when"": [ { ""!*Renderer"": ""DXVK"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Resolution", "1920x1080"));
+
+            Assert.True(WhenResolver.Match(when, selected));
+        }
+
+        [Fact]
+        public void CaseInsensitive_Equals_And_Contains_Work()
+        {
+            var json = @"{ ""when"": [ { ""Renderer"": ""dxvk"", ""*Resolution"": ""1920X"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Renderer", "DXVK"), ("Resolution", "1920x1080"));
+
+            Assert.True(WhenResolver.Match(when, selected));
+        }
+
+        [Fact]
+        public void CaseInsensitive_NotEquals_And_NotContains_Work()
+        {
+            var json = @"{ ""when"": [ { ""!Renderer"": ""dxvk"", ""!*Resolution"": ""(21/9)"" } ] }";
+            var when = ParseWhen(json);
+            var selected = Sel(("Renderer", "DX9"), ("Resolution", "1920x1080 (16/9)"));
+
+            Assert.True(WhenResolver.Match(when, selected));
+        }
     }
 }
