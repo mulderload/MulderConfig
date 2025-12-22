@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MulderLauncher.Models;
 
 namespace MulderLauncher.Services
@@ -8,12 +10,10 @@ namespace MulderLauncher.Services
         public static bool Match(List<WhenGroup> groups, IReadOnlyDictionary<string, object?> selected)
         {
             if (groups == null || groups.Count == 0)
-                return true; // vide = toujours vrai
+                return true; // Empty `when` means "always apply".
 
             return groups.Any(group => IsGroupMatch(group, selected));
         }
-
-        // ---- helpers ----------------------------------------------------
 
         private static bool IsGroupMatch(WhenGroup group, IReadOnlyDictionary<string, object?> selected)
         {
@@ -24,23 +24,24 @@ namespace MulderLauncher.Services
 
                 var (op, key) = ParseKey(rawKey);
 
-                selected.TryGetValue(key, out var selectedValue); // peut être null
+                bool hasKey = selected.TryGetValue(key, out var selectedValue);
 
-                // Cas spécial : expected vide, sans opérateur => "rien sélectionné"
-                if (op == Op.Equals && string.IsNullOrEmpty(expected))
+                // Special case: expected is "" and operator is Equals => "nothing selected".
+                // This is mainly for checkbox groups where an empty list means "no selection".
+                if (op == ConditionOperator.Equals && string.IsNullOrEmpty(expected))
                 {
-                    if (IsNothingSelected(selectedValue))
+                    if (IsNullOrEmptySelection(selectedValue))
                         continue;
 
                     return false;
                 }
 
-                // Clé absente: 
-                // - Equals / Contains => ne peut pas matcher
-                // - NotEquals / NotContains => considéré comme vrai ("différent" / "ne contient pas")
-                if (selectedValue == null)
+                // Missing key (or null value):
+                // - Equals / Contains => cannot match
+                // - NotEquals / NotContains => considered true ("different" / "does not contain")
+                if (!hasKey || selectedValue == null)
                 {
-                    if (op == Op.NotEquals || op == Op.NotContains)
+                    if (op == ConditionOperator.NotEquals || op == ConditionOperator.NotContains)
                         continue;
 
                     return false;
@@ -53,7 +54,7 @@ namespace MulderLauncher.Services
             return true;
         }
 
-        private static bool IsNothingSelected(object? selectedValue)
+        private static bool IsNullOrEmptySelection(object? selectedValue)
         {
             if (selectedValue == null)
                 return true;
@@ -62,15 +63,15 @@ namespace MulderLauncher.Services
             return false;
         }
 
-        private static bool IsValueMatch(object selectedValue, string expected, Op op)
+        private static bool IsValueMatch(object selectedValue, string expected, ConditionOperator op)
         {
             if (selectedValue is List<string> list)
             {
                 return op switch
                 {
-                    Op.Contains => list.Any(v => Contains(v, expected)),
-                    Op.NotContains => !list.Any(v => Contains(v, expected)),
-                    Op.NotEquals => !list.Contains(expected, StringComparer.OrdinalIgnoreCase),
+                    ConditionOperator.Contains => list.Any(v => ContainsIgnoreCase(v, expected)),
+                    ConditionOperator.NotContains => !list.Any(v => ContainsIgnoreCase(v, expected)),
+                    ConditionOperator.NotEquals => !list.Contains(expected, StringComparer.OrdinalIgnoreCase),
                     _ => list.Contains(expected, StringComparer.OrdinalIgnoreCase),
                 };
             }
@@ -78,30 +79,36 @@ namespace MulderLauncher.Services
             var actual = selectedValue.ToString() ?? string.Empty;
             return op switch
             {
-                Op.Contains => Contains(actual, expected),
-                Op.NotContains => !Contains(actual, expected),
-                Op.NotEquals => !EqualsIgnoreCase(actual, expected),
+                ConditionOperator.Contains => ContainsIgnoreCase(actual, expected),
+                ConditionOperator.NotContains => !ContainsIgnoreCase(actual, expected),
+                ConditionOperator.NotEquals => !EqualsIgnoreCase(actual, expected),
                 _ => EqualsIgnoreCase(actual, expected),
             };
         }
 
-        private static (Op op, string key) ParseKey(string rawKey)
+        private static (ConditionOperator op, string key) ParseKey(string rawKey)
         {
             if (rawKey.StartsWith("!*"))
-                return (Op.NotContains, rawKey.TrimStart('!', '*'));
+                return (ConditionOperator.NotContains, rawKey.TrimStart('!', '*'));
             if (rawKey.StartsWith("*"))
-                return (Op.Contains, rawKey.TrimStart('*'));
+                return (ConditionOperator.Contains, rawKey.TrimStart('*'));
             if (rawKey.StartsWith("!"))
-                return (Op.NotEquals, rawKey.TrimStart('!'));
-            return (Op.Equals, rawKey);
+                return (ConditionOperator.NotEquals, rawKey.TrimStart('!'));
+            return (ConditionOperator.Equals, rawKey);
         }
 
-        private static bool Contains(string actual, string expected) =>
+        private static bool ContainsIgnoreCase(string actual, string expected) =>
             actual.IndexOf(expected, StringComparison.OrdinalIgnoreCase) >= 0;
 
         private static bool EqualsIgnoreCase(string a, string b) =>
             string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 
-        private enum Op { Equals, NotEquals, Contains, NotContains }
+        private enum ConditionOperator
+        {
+            Equals,
+            NotEquals,
+            Contains,
+            NotContains,
+        }
     }
 }
