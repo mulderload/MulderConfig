@@ -1,6 +1,7 @@
 using MulderLauncher.Actions.Launch;
 using MulderLauncher.Actions.Operations;
 using MulderLauncher.Config;
+using MulderLauncher.Replacement;
 using MulderLauncher.Save;
 
 namespace MulderLauncher.UI
@@ -9,7 +10,7 @@ namespace MulderLauncher.UI
     {
         private readonly int? steamAddonId;
         private readonly ConfigProvider configProvider;
-        private readonly ExeWrapper exeWrapper;
+        private readonly ExeReplacer exeReplacer;
         private readonly FileActionManager fileActionManager;
         private readonly FormBuilder formBuilder;
         private readonly FormValidator formValidator;
@@ -20,7 +21,7 @@ namespace MulderLauncher.UI
         public Form1(
             int? steamAddonId,
             ConfigProvider configProvider,
-            ExeWrapper exeWrapper,
+            ExeReplacer exeReplacer,
             FileActionManager fileActionManager,
             FormBuilder formBuilder,
             FormValidator formValidator,
@@ -30,7 +31,7 @@ namespace MulderLauncher.UI
         {
             this.steamAddonId = steamAddonId;
             this.configProvider = configProvider;
-            this.exeWrapper = exeWrapper;
+            this.exeReplacer = exeReplacer;
             this.fileActionManager = fileActionManager;
             this.formBuilder = formBuilder;
             this.formValidator = formValidator;
@@ -104,10 +105,8 @@ namespace MulderLauncher.UI
 
             fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
 
-            if (config.Actions.Launch.Count > 0 && !exeWrapper.IsWrapped() && exeWrapper.CanWrap())
-            {
-                exeWrapper.Wrap();
-            }
+            if (config.Actions.Launch.Count > 0)
+                exeReplacer.EnsureReplaced();
 
             MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

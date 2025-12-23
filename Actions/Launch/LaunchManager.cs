@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using MulderLauncher.Actions.When;
 using MulderLauncher.Config;
+using MulderLauncher.Replacement;
 using MulderLauncher.Selections;
 
 namespace MulderLauncher.Actions.Launch
 {
-    public class LaunchManager(ConfigProvider configProvider, ISelectionProvider selectionProvider, ExeWrapper exeWrapper)
+    public class LaunchManager(ConfigProvider configProvider, ISelectionProvider selectionProvider, ExeReplacer exeReplacer)
     {
         public void Launch()
         {
@@ -37,7 +38,7 @@ namespace MulderLauncher.Actions.Launch
             selected["Addon"] = selectionProvider.GetAddon();
 
             // Defaults
-            var exePath = exeWrapper.GetDefaultLaunchExePath();
+            var exePath = exeReplacer.GetDefaultLaunchExePath();
             var workDir = Application.StartupPath;
             var args = new List<string>();
 

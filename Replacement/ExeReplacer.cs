@@ -1,8 +1,8 @@
 using MulderLauncher.Config;
 
-namespace MulderLauncher.Actions.Launch
+namespace MulderLauncher.Replacement
 {
-    public class ExeWrapper(ConfigProvider configProvider)
+    public class ExeReplacer(ConfigProvider configProvider)
     {
         private const string LAUNCHER_NAME = "MulderLauncher";
 
@@ -21,7 +21,7 @@ namespace MulderLauncher.Actions.Launch
         public string GetDefaultLaunchExePath()
         {
             var (originalExe, targetExe) = GetExePaths();
-            return IsWrapped() && File.Exists(targetExe) ? targetExe : originalExe;
+            return IsReplaced() && File.Exists(targetExe) ? targetExe : originalExe;
         }
 
         private string GetLauncherPath()
@@ -42,7 +42,7 @@ namespace MulderLauncher.Actions.Launch
             return true;
         }
 
-        public bool IsWrapped()
+        public bool IsReplaced()
         {
             var (originalExe, targetExe) = GetExePaths();
 
@@ -50,35 +50,33 @@ namespace MulderLauncher.Actions.Launch
                 return false;
 
             var launcherExe = GetLauncherPath();
-
             return FilesEquals(originalExe, launcherExe);
         }
 
-        public bool IsWrapping()
+        public bool IsReplacing()
         {
-            if (!IsWrapped())
+            if (!IsReplaced())
                 return false;
 
-            var originalExeName = configProvider.GetConfig().Game.OriginalExe.ToLower();
-            var processExeName = (System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe").ToLower();
+            var originalExeName = configProvider.GetConfig().Game.OriginalExe.ToLowerInvariant();
+            var processExeName = (System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe").ToLowerInvariant();
 
             return originalExeName.Equals(processExeName);
         }
 
-        public bool CanWrap()
+        public bool CanReplace()
         {
             var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            if (processName != LAUNCHER_NAME)
+            if (!processName.Equals(LAUNCHER_NAME, StringComparison.OrdinalIgnoreCase))
                 return false;
 
             var (originalExe, _) = GetExePaths();
-
-            return (File.Exists(originalExe));
+            return File.Exists(originalExe);
         }
 
-        public void Wrap()
+        public void Replace()
         {
-            if (!CanWrap())
+            if (!CanReplace())
                 return;
 
             var (originalExe, targetExe) = GetExePaths();
@@ -86,13 +84,21 @@ namespace MulderLauncher.Actions.Launch
 
             try
             {
-                File.Copy(Path.Combine(Application.StartupPath, $"{LAUNCHER_NAME}.exe"), originalExe, true);
-                MessageBox.Show("Wrapping done.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                File.Copy(GetLauncherPath(), originalExe, true);
+                MessageBox.Show("Replacement done.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Warning: Wrapping partially failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message, "Warning: Replacement partially failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        public void EnsureReplaced()
+        {
+            if (IsReplaced())
+                return;
+
+            Replace();
         }
     }
 }

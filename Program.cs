@@ -3,6 +3,7 @@ using System.Linq;
 using MulderLauncher.Actions.Launch;
 using MulderLauncher.Actions.Operations;
 using MulderLauncher.Config;
+using MulderLauncher.Replacement;
 using MulderLauncher.Save;
 using MulderLauncher.UI;
 
@@ -19,12 +20,12 @@ namespace MulderLauncher
             var steamAddonId = ParseSteamAddonId(args);
 
             var configProvider = new ConfigProvider();
-            var exeWrapper = new ExeWrapper(configProvider);
+            var exeReplacer = new ExeReplacer(configProvider);
 
             // Wrapper mode must be headless (no UI initialization).
-            if (exeWrapper.IsWrapped())
+            if (exeReplacer.IsReplacing())
             {
-                RunHeadlessWrapperMode(configProvider, exeWrapper, steamAddonId);
+                RunHeadlessWrapperMode(configProvider, exeReplacer, steamAddonId);
                 return;
             }
 
@@ -35,12 +36,12 @@ namespace MulderLauncher
             var formBuilder = new FormBuilder(formValidator, formStateManager);
             var fileActionManager = new FileActionManager();
             var saveManager = new SaveManager(formStateManager);
-            var launchManager = new LaunchManager(configProvider, formStateManager, exeWrapper);
+            var launchManager = new LaunchManager(configProvider, formStateManager, exeReplacer);
 
             Application.Run(new Form1(
                 steamAddonId,
                 configProvider,
-                exeWrapper,
+                exeReplacer,
                 fileActionManager,
                 formBuilder,
                 formValidator,
@@ -49,7 +50,7 @@ namespace MulderLauncher
                 saveManager));
         }
 
-        private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeWrapper exeWrapper, int? steamAddonId)
+        private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeReplacer exeReplacer, int? steamAddonId)
         {
             var config = configProvider.GetConfig();
 
@@ -72,7 +73,7 @@ namespace MulderLauncher
             var fileActionManager = new FileActionManager();
             fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
 
-            var launchManager = new LaunchManager(configProvider, selectionProvider, exeWrapper);
+            var launchManager = new LaunchManager(configProvider, selectionProvider, exeReplacer);
             launchManager.Launch();
         }
 
