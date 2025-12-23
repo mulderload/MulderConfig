@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,87 +10,140 @@ namespace MulderLauncher.Services
 {
     public class FileActionManager
     {
-        public void ExecuteFileOperations(List<FileOperationAction> operations, Dictionary<string, object> selected)
+        public void ExecuteOperations(List<OperationAction> operations, Dictionary<string, object> selected)
         {
             foreach (var action in operations)
             {
                 if (!WhenResolver.Match(action.When, selected))
                     continue;
 
-                var sourcePath = Path.Combine(Application.StartupPath, action.Source);
-                var targetPath = action.Target != null ? Path.Combine(Application.StartupPath, action.Target) : null;
-
                 try
                 {
-                    switch (action.Operation.ToLower())
+                    switch ((action.Operation ?? string.Empty).ToLower())
                     {
                         case "rename":
                         case "move":
-                            if (targetPath != null && File.Exists(sourcePath))
-                            {
-                                // Supprimer la cible si elle existe déjà
-                                if (File.Exists(targetPath))
-                                    File.Delete(targetPath);
-                                File.Move(sourcePath, targetPath);
-                            }
+                            ExecuteMove(action);
                             break;
 
                         case "copy":
-                            if (targetPath != null && File.Exists(sourcePath))
-                                File.Copy(sourcePath, targetPath, overwrite: true);
+                            ExecuteCopy(action);
                             break;
 
                         case "delete":
-                            if (File.Exists(sourcePath))
-                                File.Delete(sourcePath);
+                            ExecuteDelete(action);
+                            break;
+
+                        case "replaceline":
+                            ExecuteReplaceLine(action);
+                            break;
+
+                        case "removeline":
+                            ExecuteRemoveLine(action);
+                            break;
+
+                        case "replacetext":
+                            ExecuteReplaceText(action);
+                            break;
+
+                        default:
+                            MessageBox.Show($"Unknown operation: {action.Operation}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"File operation failed: {action.Operation} {action.Source}\n{ex.Message}", 
-                        "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"Operation failed: {action.Operation}\n{ex.Message}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
 
-        public void ExecuteFileEdits(List<FileEditAction> edits, Dictionary<string, object> selected)
+        private static void ExecuteMove(OperationAction action)
         {
-            foreach (var edit in edits)
+            if (string.IsNullOrWhiteSpace(action.Source) || string.IsNullOrWhiteSpace(action.Target))
+                throw new InvalidOperationException("Missing 'source' or 'target' for rename/move.");
+
+            var sourcePath = Path.Combine(Application.StartupPath, action.Source);
+            var targetPath = Path.Combine(Application.StartupPath, action.Target);
+
+            if (!File.Exists(sourcePath))
+                return;
+
+            if (File.Exists(targetPath))
+                File.Delete(targetPath);
+
+            File.Move(sourcePath, targetPath);
+        }
+
+        private static void ExecuteCopy(OperationAction action)
+        {
+            if (string.IsNullOrWhiteSpace(action.Source) || string.IsNullOrWhiteSpace(action.Target))
+                throw new InvalidOperationException("Missing 'source' or 'target' for copy.");
+
+            var sourcePath = Path.Combine(Application.StartupPath, action.Source);
+            var targetPath = Path.Combine(Application.StartupPath, action.Target);
+
+            if (!File.Exists(sourcePath))
+                return;
+
+            File.Copy(sourcePath, targetPath, overwrite: true);
+        }
+
+        private static void ExecuteDelete(OperationAction action)
+        {
+            if (string.IsNullOrWhiteSpace(action.Source))
+                throw new InvalidOperationException("Missing 'source' for delete.");
+
+            var sourcePath = Path.Combine(Application.StartupPath, action.Source);
+            if (File.Exists(sourcePath))
+                File.Delete(sourcePath);
+        }
+
+        private void ExecuteReplaceLine(OperationAction action)
+        {
+            if (string.IsNullOrWhiteSpace(action.Pattern) || action.Replacement == null)
+                throw new InvalidOperationException("Missing 'pattern' or 'replacement' for replaceLine.");
+
+            foreach (var filePath in ResolveFiles(action.Files))
+                ReplaceLineInFile(filePath, action.Pattern, action.Replacement);
+        }
+
+        private void ExecuteRemoveLine(OperationAction action)
+        {
+            if (string.IsNullOrWhiteSpace(action.Pattern))
+                throw new InvalidOperationException("Missing 'pattern' for removeLine.");
+
+            foreach (var filePath in ResolveFiles(action.Files))
+                RemoveLineInFile(filePath, action.Pattern);
+        }
+
+        private void ExecuteReplaceText(OperationAction action)
+        {
+            if (action.Search == null || action.Replacement == null)
+                throw new InvalidOperationException("Missing 'search' or 'replacement' for replaceText.");
+
+            foreach (var filePath in ResolveFiles(action.Files))
+                ReplaceTextInFile(filePath, action.Search, action.Replacement);
+        }
+
+        private static IEnumerable<string> ResolveFiles(List<string>? files)
+        {
+            if (files == null || files.Count == 0)
+                yield break;
+
+            foreach (var f in files)
             {
-                if (!WhenResolver.Match(edit.When, selected))
+                if (string.IsNullOrWhiteSpace(f))
                     continue;
 
-                var filePath = Path.Combine(Application.StartupPath, edit.File);
-
+                var filePath = Path.Combine(Application.StartupPath, f);
                 if (!File.Exists(filePath))
                 {
-                    MessageBox.Show($"File not found: {edit.File}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"File not found: {f}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     continue;
                 }
 
-                try
-                {
-                    switch (edit.Operation.ToLower())
-                    {
-                        case "replaceline":
-                            ReplaceLineInFile(filePath, edit.Pattern!, edit.Replacement!);
-                            break;
-
-                        case "removeline":
-                            RemoveLineInFile(filePath, edit.Pattern!);
-                            break;
-
-                        case "replacetext":
-                            ReplaceTextInFile(filePath, edit.Search!, edit.Replacement!);
-                            break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"File edit failed: {edit.Operation} in {edit.File}\n{ex.Message}", 
-                        "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+                yield return filePath;
             }
         }
 
@@ -113,7 +168,6 @@ namespace MulderLauncher.Services
                     modified = true;
                     if (replacementLines.Count > 0)
                         newLines.AddRange(replacementLines);
-                    // si replacement vide, on supprime la ligne
                 }
                 else
                 {
@@ -129,13 +183,11 @@ namespace MulderLauncher.Services
         {
             var lines = File.ReadAllLines(filePath).ToList();
             var regex = new Regex(pattern, RegexOptions.IgnoreCase);
-            
+
             var newLines = lines.Where(line => !regex.IsMatch(line)).ToList();
 
             if (newLines.Count < lines.Count)
-            {
                 File.WriteAllLines(filePath, newLines.ToArray());
-            }
         }
 
         private void ReplaceTextInFile(string filePath, string search, string replacement)

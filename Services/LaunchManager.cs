@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Windows.Forms;
+using MulderLauncher.Models;
 
 namespace MulderLauncher.Services
 {
@@ -6,8 +8,7 @@ namespace MulderLauncher.Services
     {
         public void Launch()
         {
-            var (exePath, workDir) = GetExecParams();
-            var args = GetArgs();
+            var (exePath, workDir, args) = ResolveLaunch();
 
             if (!File.Exists(exePath))
             {
@@ -27,40 +28,50 @@ namespace MulderLauncher.Services
             process.Start();
         }
 
-        private (string exePath, string workDir) GetExecParams()
+        private (string exePath, string workDir, string args) ResolveLaunch()
         {
             var config = configProvider.GetConfig();
+
             var selected = formStateManager.GetChoices();
             selected["Addon"] = formStateManager.GetAddon();
 
-            foreach (var action in config.Actions.Exe)
-            {
-                if (WhenResolver.Match(action.When, selected))
-                {
-                    // result = [exePath, workDir]
-                    return (action.Result[0], action.Result[1]);
-                }
-            }
-
-            throw new InvalidOperationException("Aucun exécutable valide trouvé.");
-        }
-
-        private string GetArgs()
-        {
-            var config = configProvider.GetConfig();
-            var selected = formStateManager.GetChoices();
-            selected["Addon"] = formStateManager.GetAddon();
+            // Defaults
+            var exePath = MakePath(config.Game.OriginalExe);
+            var workDir = Application.StartupPath;
             var args = new List<string>();
 
-            foreach (var action in config.Actions.Args)
+            foreach (var rule in config.Actions.Launch)
             {
-                if (WhenResolver.Match(action.When, selected))
+                if (!WhenResolver.Match(rule.When, selected))
+                    continue;
+
+                // Atomic override: last match wins
+                if (rule.Exec != null)
                 {
-                    args.Add(action.Result);
+                    exePath = MakePath(rule.Exec.Name);
+                    workDir = MakePath(rule.Exec.WorkDir);
+                }
+
+                // Cumulative: append all matching args
+                if (rule.Args != null)
+                {
+                    foreach (var a in rule.Args)
+                    {
+                        if (!string.IsNullOrWhiteSpace(a))
+                            args.Add(a);
+                    }
                 }
             }
 
-            return string.Join(" ", args);
+            return (exePath, workDir, string.Join(" ", args));
+        }
+
+        private static string MakePath(string path)
+        {
+            if (Path.IsPathRooted(path))
+                return Path.GetFullPath(path);
+
+            return Path.GetFullPath(Path.Combine(Application.StartupPath, path));
         }
     }
 }

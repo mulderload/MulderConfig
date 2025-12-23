@@ -1,4 +1,6 @@
-﻿namespace MulderLauncher.Models
+﻿using Newtonsoft.Json;
+
+namespace MulderLauncher.Models
 {
     public class Config
     {
@@ -10,7 +12,8 @@
 
     public class Game
     {
-        public required string Title { get; set; }
+        [JsonProperty("name")]
+        public required string Name { get; set; }
         public required string OriginalExe { get; set; }
     }
 
@@ -46,39 +49,40 @@
 
     public class ActionRoot
     {
-        public required List<ExecAction> Exe { get; set; }
-        public List<ArgsAction>? Args { get; set; }
-        public List<FileOperationAction>? FileOperations { get; set; }
-        public List<FileEditAction>? FileEdits { get; set; }
+        public required List<LaunchAction> Launch { get; set; }
+        public required List<OperationAction> Operations { get; set; }
     }
 
-    public class ExecAction
+    public class LaunchAction
     {
-        public required List<WhenGroup> When { get; set; }
-        public required List<string> Result { get; set; }
+        public List<WhenGroup>? When { get; set; }
+
+        // Atomic override: if present, it defines both exe name + working directory
+        public ExecSpec? Exec { get; set; }
+
+        // Cumulative: appended to the final args in JSON order
+        public List<string>? Args { get; set; }
     }
 
-    public class ArgsAction
+    public class ExecSpec
     {
-        public required List<WhenGroup> When { get; set; }
-        public required string Result { get; set; }
+        public required string Name { get; set; }
+        public required string WorkDir { get; set; }
     }
 
-    public class FileOperationAction
+    public class OperationAction
     {
-        public required List<WhenGroup> When { get; set; }
-        public required string Operation { get; set; } // "rename", "copy", "delete", "move"
-        public required string Source { get; set; }
-        public string? Target { get; set; } // optionnel pour "delete"
-    }
-
-    public class FileEditAction
-    {
-        public required List<WhenGroup> When { get; set; }
+        public List<WhenGroup>? When { get; set; }
         public required string Operation { get; set; }
-        public required string File { get; set; }
+
+        // File ops (rename/copy/move/delete, etc.)
+        public string? Source { get; set; }
+        public string? Target { get; set; }
+
+        // File edits (replaceLine/removeLine/replace, etc.)
+        public List<string>? Files { get; set; }
         public string? Pattern { get; set; }
         public string? Search { get; set; }
-        public string? Replacement { get; set; } // Enlever le "required"
+        public string? Replacement { get; set; }
     }
 }

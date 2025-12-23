@@ -30,7 +30,7 @@ namespace MulderLauncher
         private void Form1_Load(object sender, EventArgs e)
         {
             var config = configProvider.GetConfig();
-            this.Text = config.Game.Title;
+            this.Text = config.Game.Name;
             formBuilder.BuildAddons(config, comboBoxAddon);
 
             if (steamAddonId != null)

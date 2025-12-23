@@ -87,11 +87,7 @@ namespace MulderLauncher.Services
             var selected = formStateManager.GetChoices();
             selected["Addon"] = formStateManager.GetAddon();
 
-            if (config.Actions.FileOperations != null)
-                fileActionManager.ExecuteFileOperations(config.Actions.FileOperations, selected);
-
-            if (config.Actions.FileEdits != null)
-                fileActionManager.ExecuteFileEdits(config.Actions.FileEdits, selected);
+            fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
         }
     }
 }
