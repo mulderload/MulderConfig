@@ -52,7 +52,8 @@ namespace MulderLauncher
 
             if (exeWrapper.IsWrapping())
             {
-                btnLaunch.PerformClick();
+                // Launched via the wrapped original exe: apply operations then launch the real game.
+                ApplyConfig(launchAfterApply: true);
                 Application.Exit();
             }
         }
@@ -74,7 +75,7 @@ namespace MulderLauncher
                 return;
             }
 
-            launchManager.Launch();
+            ApplyConfig(launchAfterApply: false);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -88,14 +89,33 @@ namespace MulderLauncher
 
             saveManager.SaveChoices();
             MessageBox.Show($"Configuration saved for {formStateManager.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
-            if (!exeWrapper.IsWrapped())
+        private void ApplyConfig(bool launchAfterApply)
+        {
+            // Persist current selection (so future wrapped launches use it)
+            saveManager.SaveChoices();
+
+            var config = configProvider.GetConfig();
+            var selected = formStateManager.GetChoices();
+            selected["Addon"] = formStateManager.GetAddon();
+
+            // Apply all operations first
+            fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
+
+            // Then ensure wrapping is in place if launch actions exist
+            if (config.Actions.Launch.Count > 0 && !exeWrapper.IsWrapped() && exeWrapper.CanWrap())
             {
-                if (exeWrapper.CanWrap())
-                {
-                    exeWrapper.Wrap();
-                }
+                exeWrapper.Wrap();
             }
+
+            if (launchAfterApply)
+            {
+                launchManager.Launch();
+                return;
+            }
+
+            MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void UpdateButtons()

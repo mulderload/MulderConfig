@@ -63,7 +63,7 @@
             btnLaunch.Name = "btnLaunch";
             btnLaunch.Size = new Size(75, 23);
             btnLaunch.TabIndex = 2;
-            btnLaunch.Text = "Launch";
+            btnLaunch.Text = "Apply";
             btnLaunch.UseVisualStyleBackColor = true;
             btnLaunch.Click += btnLaunch_Click;
             // 

@@ -8,7 +8,8 @@
         {
             var config = configProvider.GetConfig();
             var originalExe = Path.Combine(Application.StartupPath, config.Game.OriginalExe);
-            var targetExe = Path.Combine(Application.StartupPath, originalExe.Replace(".exe", "_o.exe"));
+            var targetExeName = Path.GetFileNameWithoutExtension(config.Game.OriginalExe) + "_o" + Path.GetExtension(config.Game.OriginalExe);
+            var targetExe = Path.Combine(Application.StartupPath, targetExeName);
 
             return (originalExe, targetExe);
         }
