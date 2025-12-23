@@ -10,7 +10,8 @@ public sealed class ApplyManager(
     ConfigProvider configProvider,
     SaveManager saveManager,
     FileActionManager fileActionManager,
-    ExeReplacer exeReplacer)
+    ExeReplacer exeReplacer,
+    ModeDetector modeDetector)
 {
     public void Apply(ISelectionProvider selectionProvider, bool persistSelections)
     {
@@ -25,7 +26,7 @@ public sealed class ApplyManager(
         selected["Addon"] = selectionProvider.GetAddon();
         fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
 
-        if (config.Actions.Launch is { Count: > 0 } && !exeReplacer.IsReplacing())
+        if (config.Actions.Launch is { Count: > 0 } && !modeDetector.IsWrapping())
         {
             exeReplacer.EnsureReplaced();
         }

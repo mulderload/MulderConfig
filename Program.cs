@@ -22,12 +22,13 @@ namespace MulderLauncher
 
             var configProvider = new ConfigProvider();
             var exeReplacer = new ExeReplacer(configProvider);
+            var modeDetector = new ModeDetector(configProvider);
             var saveManager = new SaveManager();
             var fileActionManager = new FileActionManager();
-            var applyManager = new ApplyManager(configProvider, saveManager, fileActionManager, exeReplacer);
+            var applyManager = new ApplyManager(configProvider, saveManager, fileActionManager, exeReplacer, modeDetector);
 
             // Wrapper mode must be headless (no UI initialization).
-            if (exeReplacer.IsReplacing())
+            if (modeDetector.IsWrapping())
             {
                 RunHeadlessWrapperMode(configProvider, exeReplacer, steamAddonId, applyManager);
                 return;

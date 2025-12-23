@@ -53,17 +53,6 @@ namespace MulderLauncher.Replacement
             return FilesEquals(originalExe, launcherExe);
         }
 
-        public bool IsReplacing()
-        {
-            if (!IsReplaced())
-                return false;
-
-            var originalExeName = configProvider.GetConfig().Game.OriginalExe.ToLowerInvariant();
-            var processExeName = (System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe").ToLowerInvariant();
-
-            return originalExeName.Equals(processExeName);
-        }
-
         public bool CanReplace()
         {
             var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
