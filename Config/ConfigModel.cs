@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
-namespace MulderLauncher.Models
+namespace MulderLauncher.Config
 {
-    public class Config
+    public class ConfigModel
     {
         public required Game Game { get; set; }
         public List<Addon>? Addons { get; set; }
@@ -14,6 +14,7 @@ namespace MulderLauncher.Models
     {
         [JsonProperty("name")]
         public required string Name { get; set; }
+
         public required string OriginalExe { get; set; }
     }
 
@@ -75,11 +76,9 @@ namespace MulderLauncher.Models
         public List<WhenGroup>? When { get; set; }
         public required string Operation { get; set; }
 
-        // File ops (rename/copy/move/delete, etc.)
         public string? Source { get; set; }
         public string? Target { get; set; }
 
-        // File edits (replaceLine/removeLine/replace, etc.)
         public List<string>? Files { get; set; }
         public string? Pattern { get; set; }
         public string? Search { get; set; }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using MulderLauncher.Models;
-using MulderLauncher.Services;
+using MulderLauncher.Actions.When;
+using MulderLauncher.Config;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -8,9 +8,9 @@ namespace TestProject.Tests
 {
     public class ConfigJsonTests
     {
-        private static Config ParseConfig(string json)
+        private static ConfigModel ParseConfig(string json)
         {
-            return JsonConvert.DeserializeObject<Config>(json)!;
+          return JsonConvert.DeserializeObject<ConfigModel>(json)!;
         }
 
         private static Dictionary<string, object> Sel(params (string key, object val)[] items)
@@ -20,7 +20,7 @@ namespace TestProject.Tests
             return d;
         }
 
-        private static (string exe, string workDir, string args) ResolveLaunchLikeLaunchManager(Config config, Dictionary<string, object> selected)
+        private static (string exe, string workDir, string args) ResolveLaunchLikeLaunchManager(ConfigModel config, Dictionary<string, object> selected)
         {
             // This mirrors the intended semantics:
             // - traverse actions.launch in JSON order

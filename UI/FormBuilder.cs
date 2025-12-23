@@ -1,11 +1,10 @@
-using MulderLauncher.Models;
-using MulderLauncher.Services;
+using MulderLauncher.Config;
 
 namespace MulderLauncher.UI
 {
     public class FormBuilder(FormValidator formValidator, FormStateManager formStateManager)
     {
-        public void BuildAddons(Config config, ComboBox comboBox)
+        public void BuildAddons(ConfigModel config, ComboBox comboBox)
         {
             comboBox.Items.Clear();
 
@@ -18,7 +17,7 @@ namespace MulderLauncher.UI
             formStateManager.SetAddon(comboBox.SelectedItem?.ToString());
         }
 
-        public void BuildForm(Config config, Panel panelOptions, Action updateButtons)
+        public void BuildForm(ConfigModel config, Panel panelOptions, Action updateButtons)
         {
             panelOptions.Controls.Clear();
 

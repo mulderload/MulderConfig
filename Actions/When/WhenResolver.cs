@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MulderLauncher.Models;
+using MulderLauncher.Config;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Actions.When
 {
     public static class WhenResolver
     {

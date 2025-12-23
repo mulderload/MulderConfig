@@ -1,6 +1,7 @@
-using MulderLauncher.Models;
+using MulderLauncher.Actions.When;
+using MulderLauncher.Config;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.UI
 {
     public class FormValidator(ConfigProvider configProvider, FormStateManager formStateManager)
     {
@@ -49,7 +50,6 @@ namespace MulderLauncher.Services
                         }
                     }
                 }
-
                 else if (group.Type == "checkboxGroup" && group.Checkboxes != null)
                 {
                     foreach (var checkboxRow in group.Checkboxes)
@@ -57,7 +57,7 @@ namespace MulderLauncher.Services
                         if (checkboxRow.DisabledWhen == null)
                             continue;
 
-                        if (formStateManager.CheckBoxes.TryGetValue(checkboxRow.Value, out var checkBox) )
+                        if (formStateManager.CheckBoxes.TryGetValue(checkboxRow.Value, out var checkBox))
                         {
                             bool disable = WhenResolver.Match(checkboxRow.DisabledWhen, selected);
                             checkBox.Enabled = !disable;
@@ -66,7 +66,6 @@ namespace MulderLauncher.Services
                     }
                 }
             }
-
         }
     }
 }

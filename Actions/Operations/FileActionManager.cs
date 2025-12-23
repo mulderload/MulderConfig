@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using MulderLauncher.Models;
+using MulderLauncher.Actions.When;
+using MulderLauncher.Config;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Actions.Operations
 {
     public class FileActionManager
     {

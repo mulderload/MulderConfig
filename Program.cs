@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
-using MulderLauncher.Services;
+using MulderLauncher.Actions.Launch;
+using MulderLauncher.Actions.Operations;
+using MulderLauncher.Config;
+using MulderLauncher.Save;
 using MulderLauncher.UI;
 
 namespace MulderLauncher
@@ -26,7 +29,24 @@ namespace MulderLauncher
             }
 
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1(steamAddonId));
+
+            var formStateManager = new FormStateManager(configProvider);
+            var formValidator = new FormValidator(configProvider, formStateManager);
+            var formBuilder = new FormBuilder(formValidator, formStateManager);
+            var fileActionManager = new FileActionManager();
+            var saveManager = new SaveManager(formStateManager);
+            var launchManager = new LaunchManager(configProvider, formStateManager, exeWrapper);
+
+            Application.Run(new Form1(
+                steamAddonId,
+                configProvider,
+                exeWrapper,
+                fileActionManager,
+                formBuilder,
+                formValidator,
+                formStateManager,
+                launchManager,
+                saveManager));
         }
 
         private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeWrapper exeWrapper, int? steamAddonId)

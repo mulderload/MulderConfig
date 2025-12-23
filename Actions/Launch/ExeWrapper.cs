@@ -1,4 +1,6 @@
-﻿namespace MulderLauncher.Services
+using MulderLauncher.Config;
+
+namespace MulderLauncher.Actions.Launch
 {
     public class ExeWrapper(ConfigProvider configProvider)
     {

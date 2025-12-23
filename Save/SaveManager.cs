@@ -1,7 +1,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MulderLauncher.UI;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Save
 {
     public class SaveManager(FormStateManager formStateManager)
     {
@@ -11,7 +12,7 @@ namespace MulderLauncher.Services
         {
             return Path.Combine(Application.StartupPath, "MulderLauncher.save.json");
         }
-        
+
         private Dictionary<string, Dictionary<string, object>> GetSaves()
         {
             if (saves == null)
@@ -27,8 +28,8 @@ namespace MulderLauncher.Services
                     try
                     {
                         var json = File.ReadAllText(savePath);
-                        saves = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json) ?? 
-                            new Dictionary<string, Dictionary<string, object>>(StringComparer.OrdinalIgnoreCase);
+                        saves = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json)
+                                ?? new Dictionary<string, Dictionary<string, object>>(StringComparer.OrdinalIgnoreCase);
                     }
                     catch
                     {
@@ -43,7 +44,7 @@ namespace MulderLauncher.Services
 
         public void LoadChoices()
         {
-            if (!GetSaves().TryGetValue(formStateManager.GetAddon(), out Dictionary<string, object>? save)) 
+            if (!GetSaves().TryGetValue(formStateManager.GetAddon(), out Dictionary<string, object>? save))
                 return;
 
             formStateManager.ResetChoices();
@@ -63,7 +64,7 @@ namespace MulderLauncher.Services
                     }
                 }
                 // radioGroup case
-                else if (entry.Value is String)
+                else if (entry.Value is string)
                 {
                     string groupName = entry.Key;
                     var value = entry.Value.ToString();
@@ -78,7 +79,7 @@ namespace MulderLauncher.Services
         public void SaveChoices()
         {
             var saves = GetSaves();
-            saves[formStateManager.GetAddon()] = formStateManager.GetChoices();
+            saves[formStateManager.GetAddon()] = formStateManager.GetChoices()!;
 
             string json = JsonConvert.SerializeObject(saves, Formatting.Indented);
             File.WriteAllText(GetSavePath(), json);

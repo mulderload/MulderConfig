@@ -1,21 +1,19 @@
-
 using Newtonsoft.Json;
-using MulderLauncher.Models;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Config
 {
     public class ConfigProvider
     {
-        private Config? Config;
+        private ConfigModel? config;
 
-        public Config GetConfig()
+        public ConfigModel GetConfig()
         {
-            if (this.Config == null)
+            if (config == null)
             {
                 string configPath = Path.Combine(Application.StartupPath, "MulderLauncher.config.json");
                 try
                 {
-                    this.Config = LoadConfig(configPath);
+                    config = LoadConfig(configPath);
                 }
                 catch (Exception ex)
                 {
@@ -25,10 +23,10 @@ namespace MulderLauncher.Services
                 }
             }
 
-            return this.Config;
+            return config;
         }
 
-        private static Config LoadConfig(string path)
+        private static ConfigModel LoadConfig(string path)
         {
             if (!File.Exists(path))
                 throw new FileNotFoundException("The file 'MulderLauncher.config.json' does not exist.", path);
@@ -36,8 +34,8 @@ namespace MulderLauncher.Services
             try
             {
                 string json = File.ReadAllText(path);
-                return JsonConvert.DeserializeObject<Config>(json) 
-                    ?? throw new InvalidDataException("The file 'MulderLauncher.config.json' is empty or invalid.");
+                   return JsonConvert.DeserializeObject<ConfigModel>(json)
+                       ?? throw new InvalidDataException("The file 'MulderLauncher.config.json' is empty or invalid.");
             }
             catch (JsonException)
             {

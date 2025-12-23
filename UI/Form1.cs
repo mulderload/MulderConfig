@@ -1,28 +1,42 @@
-using MulderLauncher.Services;
+using MulderLauncher.Actions.Launch;
+using MulderLauncher.Actions.Operations;
+using MulderLauncher.Config;
+using MulderLauncher.Save;
 
 namespace MulderLauncher.UI
 {
     public partial class Form1 : Form
     {
         private readonly int? steamAddonId;
-        private readonly ConfigProvider configProvider = new();
+        private readonly ConfigProvider configProvider;
         private readonly ExeWrapper exeWrapper;
-        private readonly FileActionManager fileActionManager = new();
+        private readonly FileActionManager fileActionManager;
         private readonly FormBuilder formBuilder;
         private readonly FormValidator formValidator;
         private readonly FormStateManager formStateManager;
         private readonly LaunchManager launchManager;
         private readonly SaveManager saveManager;
 
-        public Form1(int? steamAddonId)
+        public Form1(
+            int? steamAddonId,
+            ConfigProvider configProvider,
+            ExeWrapper exeWrapper,
+            FileActionManager fileActionManager,
+            FormBuilder formBuilder,
+            FormValidator formValidator,
+            FormStateManager formStateManager,
+            LaunchManager launchManager,
+            SaveManager saveManager)
         {
             this.steamAddonId = steamAddonId;
-            exeWrapper = new(configProvider);
-            formStateManager = new(configProvider);
-            formValidator = new(configProvider, formStateManager);
-            formBuilder = new(formValidator, formStateManager);
-            launchManager = new(configProvider, formStateManager, exeWrapper);
-            saveManager = new(formStateManager);
+            this.configProvider = configProvider;
+            this.exeWrapper = exeWrapper;
+            this.fileActionManager = fileActionManager;
+            this.formBuilder = formBuilder;
+            this.formValidator = formValidator;
+            this.formStateManager = formStateManager;
+            this.launchManager = launchManager;
+            this.saveManager = saveManager;
 
             InitializeComponent();
         }

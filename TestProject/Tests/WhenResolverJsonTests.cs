@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using MulderLauncher.Models;
-using MulderLauncher.Services;
+using MulderLauncher.Actions.When;
+using MulderLauncher.Config;
 using Newtonsoft.Json.Linq;
 using Xunit;
 

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MulderLauncher.Selections;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Save
 {
     public class SavedSelectionProvider : ISelectionProvider
     {

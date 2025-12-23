@@ -1,8 +1,9 @@
 using System.Diagnostics;
-using System.Windows.Forms;
-using MulderLauncher.Models;
+using MulderLauncher.Actions.When;
+using MulderLauncher.Config;
+using MulderLauncher.Selections;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Actions.Launch
 {
     public class LaunchManager(ConfigProvider configProvider, ISelectionProvider selectionProvider, ExeWrapper exeWrapper)
     {

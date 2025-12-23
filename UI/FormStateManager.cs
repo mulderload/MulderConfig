@@ -1,34 +1,35 @@
-﻿using MulderLauncher.Models;
+using MulderLauncher.Config;
+using MulderLauncher.Selections;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.UI
 {
     public class FormStateManager(ConfigProvider configProvider) : ISelectionProvider
     {
-        private string? Addon;
-        public readonly Dictionary<string, Dictionary<string, RadioButton>> RadioButtons = [] ;
+        private string? addon;
+        public readonly Dictionary<string, Dictionary<string, RadioButton>> RadioButtons = [];
         public readonly Dictionary<string, CheckBox> CheckBoxes = [];
 
         internal void AddRadioButton(string groupName, RadioButton radioButton, string value)
         {
-            if (!this.RadioButtons.ContainsKey(groupName))
-                this.RadioButtons[groupName] = [];
+            if (!RadioButtons.ContainsKey(groupName))
+                RadioButtons[groupName] = [];
 
-            this.RadioButtons[groupName][value] = radioButton;
+            RadioButtons[groupName][value] = radioButton;
         }
 
         internal void AddCheckBox(CheckBox checkBox, string value)
         {
-            this.CheckBoxes[value] = checkBox;
+            CheckBoxes[value] = checkBox;
         }
 
         public void SetAddon(string? addon)
         {
-            this.Addon = addon;
+            this.addon = addon;
         }
 
         public string GetAddon()
         {
-            return this.Addon ?? "default";
+            return addon ?? "default";
         }
 
         public void ResetChoices()
@@ -45,7 +46,8 @@ namespace MulderLauncher.Services
             foreach (var kv in CheckBoxes)
             {
                 var cb = kv.Value;
-                if (cb.Checked) {
+                if (cb.Checked)
+                {
                     cb.Checked = false;
                     cb.Enabled = true;
                 }
@@ -65,7 +67,6 @@ namespace MulderLauncher.Services
                     if (selectedRadio != null)
                         choices[group.Name] = selectedRadio.Text;
                 }
-
                 else if (group.Type == "checkboxGroup" && group.Checkboxes != null)
                 {
                     var selectedCheckboxes = group.Checkboxes

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.Selections
 {
     public interface ISelectionProvider
     {
