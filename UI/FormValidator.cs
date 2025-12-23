@@ -3,7 +3,7 @@ using MulderLauncher.Config;
 
 namespace MulderLauncher.UI
 {
-    public class FormValidator(ConfigProvider configProvider, FormStateManager formStateManager)
+    public class FormValidator(ConfigProvider configProvider, FormSelectionProvider formSelectionProvider)
     {
         public bool IsValid()
         {
@@ -17,7 +17,7 @@ namespace MulderLauncher.UI
                 if (group.Type != "radioGroup")
                     continue;
 
-                if (!formStateManager.RadioButtons.TryGetValue(group.Name, out var radios))
+                if (!formSelectionProvider.RadioButtons.TryGetValue(group.Name, out var radios))
                     continue;
 
                 if (!radios.Values.Any(rb => rb.Enabled && rb.Checked))
@@ -30,12 +30,12 @@ namespace MulderLauncher.UI
         public void ApplyWhenConstraints()
         {
             var config = configProvider.GetConfig();
-            var selected = formStateManager.GetChoices();
-            selected["Addon"] = formStateManager.GetAddon();
+            var selected = formSelectionProvider.GetChoices();
+            selected["Addon"] = formSelectionProvider.GetAddon();
 
             foreach (var group in config.OptionGroups)
             {
-                if (group.Type == "radioGroup" && formStateManager.RadioButtons.TryGetValue(group.Name, out var radios))
+                if (group.Type == "radioGroup" && formSelectionProvider.RadioButtons.TryGetValue(group.Name, out var radios))
                 {
                     foreach (var radioRow in group.Radios)
                     {
@@ -57,7 +57,7 @@ namespace MulderLauncher.UI
                         if (checkboxRow.DisabledWhen == null)
                             continue;
 
-                        if (formStateManager.CheckBoxes.TryGetValue(checkboxRow.Value, out var checkBox))
+                        if (formSelectionProvider.CheckBoxes.TryGetValue(checkboxRow.Value, out var checkBox))
                         {
                             bool disable = WhenResolver.Match(checkboxRow.DisabledWhen, selected);
                             checkBox.Enabled = !disable;

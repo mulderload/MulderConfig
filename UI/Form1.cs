@@ -1,7 +1,5 @@
-using MulderLauncher.Actions.Launch;
-using MulderLauncher.Actions.Operations;
+using MulderLauncher.Pipeline;
 using MulderLauncher.Config;
-using MulderLauncher.Replacement;
 using MulderLauncher.Save;
 
 namespace MulderLauncher.UI
@@ -10,33 +8,27 @@ namespace MulderLauncher.UI
     {
         private readonly int? steamAddonId;
         private readonly ConfigProvider configProvider;
-        private readonly ExeReplacer exeReplacer;
-        private readonly FileActionManager fileActionManager;
+        private readonly ApplyManager applyManager;
         private readonly FormBuilder formBuilder;
         private readonly FormValidator formValidator;
-        private readonly FormStateManager formStateManager;
-        private readonly LaunchManager launchManager;
+        private readonly FormSelectionProvider formSelectionProvider;
         private readonly SaveManager saveManager;
 
         public Form1(
             int? steamAddonId,
             ConfigProvider configProvider,
-            ExeReplacer exeReplacer,
-            FileActionManager fileActionManager,
+            ApplyManager applyManager,
             FormBuilder formBuilder,
             FormValidator formValidator,
-            FormStateManager formStateManager,
-            LaunchManager launchManager,
+            FormSelectionProvider formSelectionProvider,
             SaveManager saveManager)
         {
             this.steamAddonId = steamAddonId;
             this.configProvider = configProvider;
-            this.exeReplacer = exeReplacer;
-            this.fileActionManager = fileActionManager;
+            this.applyManager = applyManager;
             this.formBuilder = formBuilder;
             this.formValidator = formValidator;
-            this.formStateManager = formStateManager;
-            this.launchManager = launchManager;
+            this.formSelectionProvider = formSelectionProvider;
             this.saveManager = saveManager;
 
             InitializeComponent();
@@ -60,14 +52,14 @@ namespace MulderLauncher.UI
             }
 
             formBuilder.BuildForm(config, panelOptions, UpdateButtons);
-            saveManager.LoadChoices();
+            LoadSavedChoices();
             UpdateButtons();
         }
 
         private void comboBoxAddon_SelectedIndexChanged(object sender, EventArgs e)
         {
-            formStateManager.SetAddon(comboBoxAddon.SelectedItem?.ToString());
-            saveManager.LoadChoices();
+            formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
+            LoadSavedChoices();
             formValidator.ApplyWhenConstraints();
             UpdateButtons();
         }
@@ -91,24 +83,22 @@ namespace MulderLauncher.UI
                 return;
             }
 
-            saveManager.SaveChoices();
-            MessageBox.Show($"Configuration saved for {formStateManager.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            saveManager.SaveChoices(formSelectionProvider.GetAddon(), formSelectionProvider.GetChoices());
+            MessageBox.Show($"Configuration saved for {formSelectionProvider.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void ApplyConfig()
         {
-            saveManager.SaveChoices();
-
-            var config = configProvider.GetConfig();
-            var selected = formStateManager.GetChoices();
-            selected["Addon"] = formStateManager.GetAddon();
-
-            fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
-
-            if (config.Actions.Launch.Count > 0)
-                exeReplacer.EnsureReplaced();
+            applyManager.Apply(formSelectionProvider, persistSelections: true);
 
             MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void LoadSavedChoices()
+        {
+            var saved = saveManager.LoadChoices(formSelectionProvider.GetAddon());
+            formSelectionProvider.ResetChoices();
+            formSelectionProvider.ApplyChoices(saved);
         }
 
         private void UpdateButtons()

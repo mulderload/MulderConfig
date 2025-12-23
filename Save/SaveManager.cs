@@ -1,19 +1,20 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using MulderLauncher.UI;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace MulderLauncher.Save
 {
-    public class SaveManager(FormStateManager formStateManager)
+    public class SaveManager
     {
-        private Dictionary<string, Dictionary<string, object>>? saves;
+        private Dictionary<string, Dictionary<string, object?>>? saves;
 
         private static string GetSavePath()
         {
             return Path.Combine(Application.StartupPath, "MulderLauncher.save.json");
         }
 
-        private Dictionary<string, Dictionary<string, object>> GetSaves()
+        private Dictionary<string, Dictionary<string, object?>> GetSaves()
         {
             if (saves == null)
             {
@@ -21,20 +22,19 @@ namespace MulderLauncher.Save
 
                 if (!File.Exists(savePath))
                 {
-                    saves = new Dictionary<string, Dictionary<string, object>>(StringComparer.OrdinalIgnoreCase);
+                    saves = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
                 }
                 else
                 {
                     try
                     {
                         var json = File.ReadAllText(savePath);
-                        saves = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json)
-                                ?? new Dictionary<string, Dictionary<string, object>>(StringComparer.OrdinalIgnoreCase);
+                        saves = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object?>>>(json)
+                                ?? new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
                     }
                     catch
                     {
-                        MessageBox.Show("Unable to load saved configuration.");
-                        saves = new Dictionary<string, Dictionary<string, object>>(StringComparer.OrdinalIgnoreCase);
+                        saves = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
                     }
                 }
             }
@@ -42,47 +42,50 @@ namespace MulderLauncher.Save
             return saves;
         }
 
-        public void LoadChoices()
+        public Dictionary<string, object?> LoadChoices(string addon)
         {
-            if (!GetSaves().TryGetValue(formStateManager.GetAddon(), out Dictionary<string, object>? save))
-                return;
+            if (!GetSaves().TryGetValue(addon, out var save))
+            {
+                return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            }
 
-            formStateManager.ResetChoices();
+            var normalized = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var entry in save)
             {
-                // checkboxGroup case
-                if (entry.Value is JArray jEntryValue)
-                {
-                    foreach (JToken jValue in jEntryValue)
-                    {
-                        var value = jValue.ToString();
-                        if (formStateManager.CheckBoxes.TryGetValue(value, out var cb))
-                        {
-                            cb.Checked = true;
-                        }
-                    }
-                }
-                // radioGroup case
-                else if (entry.Value is string)
-                {
-                    string groupName = entry.Key;
-                    var value = entry.Value.ToString();
-                    if (value != null && formStateManager.RadioButtons.TryGetValue(groupName, out var radios) && radios.TryGetValue(value, out var rb))
-                    {
-                        rb.Checked = true;
-                    }
-                }
+                normalized[entry.Key] = NormalizeValue(entry.Value);
             }
+
+            return normalized;
         }
 
-        public void SaveChoices()
+        public void SaveChoices(string addon, Dictionary<string, object?> choices)
         {
             var saves = GetSaves();
-            saves[formStateManager.GetAddon()] = formStateManager.GetChoices()!;
+            saves[addon] = new Dictionary<string, object?>(choices, StringComparer.OrdinalIgnoreCase);
 
             string json = JsonConvert.SerializeObject(saves, Formatting.Indented);
             File.WriteAllText(GetSavePath(), json);
+        }
+
+        private static object? NormalizeValue(object? value)
+        {
+            if (value is JArray array)
+            {
+                return array.Values<string>().Where(v => v != null).Select(v => v!).ToList();
+            }
+
+            if (value is JValue jValue)
+            {
+                return jValue.Type == JTokenType.Null ? null : jValue.ToObject<object?>();
+            }
+
+            if (value is IList<object?> list)
+            {
+                return list.Select(v => v?.ToString()).Where(v => v != null).Select(v => v!).ToList();
+            }
+
+            return value;
         }
     }
 }

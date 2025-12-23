@@ -2,7 +2,7 @@ using MulderLauncher.Config;
 
 namespace MulderLauncher.UI
 {
-    public class FormBuilder(FormValidator formValidator, FormStateManager formStateManager)
+    public class FormBuilder(FormValidator formValidator, FormSelectionProvider formSelectionProvider)
     {
         public void BuildAddons(ConfigModel config, ComboBox comboBox)
         {
@@ -14,7 +14,7 @@ namespace MulderLauncher.UI
             }
 
             comboBox.SelectedIndex = 0;
-            formStateManager.SetAddon(comboBox.SelectedItem?.ToString());
+            formSelectionProvider.SetAddon(comboBox.SelectedItem?.ToString());
         }
 
         public void BuildForm(ConfigModel config, Panel panelOptions, Action updateButtons)
@@ -58,7 +58,7 @@ namespace MulderLauncher.UI
                             updateButtons();
                         };
                         groupBox.Controls.Add(radioButton);
-                        formStateManager.AddRadioButton(group.Name, radioButton, radioChoice.Value);
+                        formSelectionProvider.AddRadioButton(group.Name, radioButton, radioChoice.Value);
                         innerY += 25;
                     }
                 }
@@ -81,7 +81,7 @@ namespace MulderLauncher.UI
                             updateButtons();
                         };
                         groupBox.Controls.Add(checkBox);
-                        formStateManager.AddCheckBox(checkBox, checkItem.Value);
+                        formSelectionProvider.AddCheckBox(checkBox, checkItem.Value);
                         innerY += 25;
                     }
                 }

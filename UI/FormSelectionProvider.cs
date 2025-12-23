@@ -3,7 +3,7 @@ using MulderLauncher.Selections;
 
 namespace MulderLauncher.UI
 {
-    public class FormStateManager(ConfigProvider configProvider) : ISelectionProvider
+    public class FormSelectionProvider(ConfigProvider configProvider) : ISelectionProvider
     {
         private string? addon;
         public readonly Dictionary<string, Dictionary<string, RadioButton>> RadioButtons = [];
@@ -50,6 +50,34 @@ namespace MulderLauncher.UI
                 {
                     cb.Checked = false;
                     cb.Enabled = true;
+                }
+            }
+        }
+
+        public void ApplyChoices(Dictionary<string, object?> savedChoices)
+        {
+            foreach (var entry in savedChoices)
+            {
+                if (entry.Value is IEnumerable<string> values && entry.Value is not string)
+                {
+                    foreach (var value in values)
+                    {
+                        if (CheckBoxes.TryGetValue(value, out var cb))
+                        {
+                            cb.Checked = true;
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (entry.Value is string selected)
+                {
+                    var groupName = entry.Key;
+                    if (RadioButtons.TryGetValue(groupName, out var radios) && radios.TryGetValue(selected, out var rb))
+                    {
+                        rb.Checked = true;
+                    }
                 }
             }
         }

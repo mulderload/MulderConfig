@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using MulderLauncher.Pipeline;
 using MulderLauncher.Actions.Launch;
 using MulderLauncher.Actions.Operations;
 using MulderLauncher.Config;
@@ -21,36 +22,34 @@ namespace MulderLauncher
 
             var configProvider = new ConfigProvider();
             var exeReplacer = new ExeReplacer(configProvider);
+            var saveManager = new SaveManager();
+            var fileActionManager = new FileActionManager();
+            var applyManager = new ApplyManager(configProvider, saveManager, fileActionManager, exeReplacer);
 
             // Wrapper mode must be headless (no UI initialization).
             if (exeReplacer.IsReplacing())
             {
-                RunHeadlessWrapperMode(configProvider, exeReplacer, steamAddonId);
+                RunHeadlessWrapperMode(configProvider, exeReplacer, steamAddonId, applyManager);
                 return;
             }
 
             ApplicationConfiguration.Initialize();
 
-            var formStateManager = new FormStateManager(configProvider);
-            var formValidator = new FormValidator(configProvider, formStateManager);
-            var formBuilder = new FormBuilder(formValidator, formStateManager);
-            var fileActionManager = new FileActionManager();
-            var saveManager = new SaveManager(formStateManager);
-            var launchManager = new LaunchManager(configProvider, formStateManager, exeReplacer);
+            var formSelectionProvider = new FormSelectionProvider(configProvider);
+            var formValidator = new FormValidator(configProvider, formSelectionProvider);
+            var formBuilder = new FormBuilder(formValidator, formSelectionProvider);
 
             Application.Run(new Form1(
                 steamAddonId,
                 configProvider,
-                exeReplacer,
-                fileActionManager,
+                applyManager,
                 formBuilder,
                 formValidator,
-                formStateManager,
-                launchManager,
+                formSelectionProvider,
                 saveManager));
         }
 
-        private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeReplacer exeReplacer, int? steamAddonId)
+        private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager)
         {
             var config = configProvider.GetConfig();
 
@@ -67,14 +66,9 @@ namespace MulderLauncher
             }
 
             var selectionProvider = new SavedSelectionProvider(addonTitle);
-            var selected = selectionProvider.GetChoices();
-            selected["Addon"] = selectionProvider.GetAddon();
-
-            var fileActionManager = new FileActionManager();
-            fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
-
             var launchManager = new LaunchManager(configProvider, selectionProvider, exeReplacer);
-            launchManager.Launch();
+            var runner = new GameRunner(applyManager, launchManager);
+            runner.Run(selectionProvider, persistSelections: false);
         }
 
         private static int? ParseSteamAddonId(string[] args)
