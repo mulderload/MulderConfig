@@ -1,6 +1,7 @@
-﻿using MulderLauncher.Models;
+using MulderLauncher.Models;
+using MulderLauncher.Services;
 
-namespace MulderLauncher.Services
+namespace MulderLauncher.UI
 {
     public class FormBuilder(FormValidator formValidator, FormStateManager formStateManager)
     {
@@ -17,7 +18,7 @@ namespace MulderLauncher.Services
             formStateManager.SetAddon(comboBox.SelectedItem?.ToString());
         }
 
-        public void BuildForm(Config config, Panel panelOptions, Action UpdateButtons)
+        public void BuildForm(Config config, Panel panelOptions, Action updateButtons)
         {
             panelOptions.Controls.Clear();
 
@@ -25,7 +26,6 @@ namespace MulderLauncher.Services
 
             foreach (var group in config.OptionGroups)
             {
-                // Crée un groupBox pour le groupe d'options
                 var groupBox = new GroupBox
                 {
                     Text = group.Name,
@@ -56,7 +56,7 @@ namespace MulderLauncher.Services
                         radioButton.CheckedChanged += (s, e) =>
                         {
                             formValidator.ApplyWhenConstraints();
-                            UpdateButtons();
+                            updateButtons();
                         };
                         groupBox.Controls.Add(radioButton);
                         formStateManager.AddRadioButton(group.Name, radioButton, radioChoice.Value);
@@ -79,7 +79,7 @@ namespace MulderLauncher.Services
                         checkBox.CheckedChanged += (s, e) =>
                         {
                             formValidator.ApplyWhenConstraints();
-                            UpdateButtons();
+                            updateButtons();
                         };
                         groupBox.Controls.Add(checkBox);
                         formStateManager.AddCheckBox(checkBox, checkItem.Value);
@@ -91,6 +91,5 @@ namespace MulderLauncher.Services
                 y += groupBox.Height + 8;
             }
         }
-
     }
 }

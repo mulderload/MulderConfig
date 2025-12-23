@@ -14,6 +14,14 @@
             return (originalExe, targetExe);
         }
 
+        public (string originalExe, string targetExe) GetExePathsPublic() => GetExePaths();
+
+        public string GetDefaultLaunchExePath()
+        {
+            var (originalExe, targetExe) = GetExePaths();
+            return IsWrapped() && File.Exists(targetExe) ? targetExe : originalExe;
+        }
+
         private string GetLauncherPath()
         {
             return Path.Combine(Application.StartupPath, $"{LAUNCHER_NAME}.exe");

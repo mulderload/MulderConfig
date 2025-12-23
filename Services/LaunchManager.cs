@@ -4,7 +4,7 @@ using MulderLauncher.Models;
 
 namespace MulderLauncher.Services
 {
-    public class LaunchManager(ConfigProvider configProvider, FormStateManager formStateManager)
+    public class LaunchManager(ConfigProvider configProvider, ISelectionProvider selectionProvider, ExeWrapper exeWrapper)
     {
         public void Launch()
         {
@@ -32,17 +32,17 @@ namespace MulderLauncher.Services
         {
             var config = configProvider.GetConfig();
 
-            var selected = formStateManager.GetChoices();
-            selected["Addon"] = formStateManager.GetAddon();
+            var selected = selectionProvider.GetChoices();
+            selected["Addon"] = selectionProvider.GetAddon();
 
             // Defaults
-            var exePath = MakePath(config.Game.OriginalExe);
+            var exePath = exeWrapper.GetDefaultLaunchExePath();
             var workDir = Application.StartupPath;
             var args = new List<string>();
 
             foreach (var rule in config.Actions.Launch)
             {
-                if (!WhenResolver.Match(rule.When, selected))
+                if (rule.When != null && !WhenResolver.Match(rule.When, selected))
                     continue;
 
                 // Atomic override: last match wins

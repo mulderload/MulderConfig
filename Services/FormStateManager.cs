@@ -2,7 +2,7 @@
 
 namespace MulderLauncher.Services
 {
-    public class FormStateManager(ConfigProvider configProvider)
+    public class FormStateManager(ConfigProvider configProvider) : ISelectionProvider
     {
         private string? Addon;
         public readonly Dictionary<string, Dictionary<string, RadioButton>> RadioButtons = [] ;

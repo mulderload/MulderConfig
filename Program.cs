@@ -1,3 +1,8 @@
+using System;
+using System.Linq;
+using MulderLauncher.Services;
+using MulderLauncher.UI;
+
 namespace MulderLauncher
 {
     internal static class Program
@@ -6,28 +11,62 @@ namespace MulderLauncher
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            var steamAddonId = ParseSteamAddonId(args);
+
+            var configProvider = new ConfigProvider();
+            var exeWrapper = new ExeWrapper(configProvider);
+
+            // Wrapper mode must be headless (no UI initialization).
+            if (exeWrapper.IsWrapped())
+            {
+                RunHeadlessWrapperMode(configProvider, exeWrapper, steamAddonId);
+                return;
+            }
+
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1(ParseSteamAddonId()));
+            Application.Run(new Form1(steamAddonId));
         }
 
-        private static int? ParseSteamAddonId()
+        private static void RunHeadlessWrapperMode(ConfigProvider configProvider, ExeWrapper exeWrapper, int? steamAddonId)
         {
-            string[] args = Environment.GetCommandLineArgs().Skip(1).ToArray();
+            var config = configProvider.GetConfig();
 
+            string? addonTitle = null;
+            if (steamAddonId != null)
+            {
+                addonTitle = config.Addons.FirstOrDefault(a => a.SteamId == steamAddonId)?.Title;
+            }
+
+            addonTitle ??= config.Addons.FirstOrDefault()?.Title;
+            if (addonTitle == null)
+            {
+                return;
+            }
+
+            var selectionProvider = new SavedSelectionProvider(addonTitle);
+            var selected = selectionProvider.GetChoices();
+            selected["Addon"] = selectionProvider.GetAddon();
+
+            var fileActionManager = new FileActionManager();
+            fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
+
+            var launchManager = new LaunchManager(configProvider, selectionProvider, exeWrapper);
+            launchManager.Launch();
+        }
+
+        private static int? ParseSteamAddonId(string[] args)
+        {
             for (int i = 0; i < args.Length - 1; i++)
             {
-                if (args[i].Equals("-addon", StringComparison.OrdinalIgnoreCase))
+                if (args[i].Equals("-addon", StringComparison.OrdinalIgnoreCase)
+                    && int.TryParse(args[i + 1], out int addonId))
                 {
-                    if (int.TryParse(args[i + 1], out int id))
-                    {
-                        return id;
-                    }
+                    return addonId;
                 }
             }
+
             return null;
         }
     }

@@ -1,6 +1,6 @@
 using MulderLauncher.Services;
 
-namespace MulderLauncher
+namespace MulderLauncher.UI
 {
     public partial class Form1 : Form
     {
@@ -21,8 +21,8 @@ namespace MulderLauncher
             formStateManager = new(configProvider);
             formValidator = new(configProvider, formStateManager);
             formBuilder = new(formValidator, formStateManager);
-            launchManager = new(configProvider, formStateManager);
-            saveManager = new(configProvider, fileActionManager, formStateManager);
+            launchManager = new(configProvider, formStateManager, exeWrapper);
+            saveManager = new(formStateManager);
 
             InitializeComponent();
         }
@@ -30,7 +30,7 @@ namespace MulderLauncher
         private void Form1_Load(object sender, EventArgs e)
         {
             var config = configProvider.GetConfig();
-            this.Text = config.Game.Name;
+            Text = config.Game.Name;
             formBuilder.BuildAddons(config, comboBoxAddon);
 
             if (steamAddonId != null)
@@ -40,22 +40,13 @@ namespace MulderLauncher
                 {
                     int index = comboBoxAddon.Items.IndexOf(match.Title);
                     if (index >= 0)
-                    {
                         comboBoxAddon.SelectedIndex = index;
-                    }
                 }
             }
 
             formBuilder.BuildForm(config, panelOptions, UpdateButtons);
             saveManager.LoadChoices();
             UpdateButtons();
-
-            if (exeWrapper.IsWrapping())
-            {
-                // Launched via the wrapped original exe: apply operations then launch the real game.
-                ApplyConfig(launchAfterApply: true);
-                Application.Exit();
-            }
         }
 
         private void comboBoxAddon_SelectedIndexChanged(object sender, EventArgs e)
@@ -70,19 +61,17 @@ namespace MulderLauncher
         {
             if (!formValidator.IsValid())
             {
-                // Should not happen since button is disabled
                 MessageBox.Show("Form is invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            ApplyConfig(launchAfterApply: false);
+            ApplyConfig();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (!formValidator.IsValid())
             {
-                // Should not happen since button is disabled
                 MessageBox.Show("Form is invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -91,28 +80,19 @@ namespace MulderLauncher
             MessageBox.Show($"Configuration saved for {formStateManager.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void ApplyConfig(bool launchAfterApply)
+        private void ApplyConfig()
         {
-            // Persist current selection (so future wrapped launches use it)
             saveManager.SaveChoices();
 
             var config = configProvider.GetConfig();
             var selected = formStateManager.GetChoices();
             selected["Addon"] = formStateManager.GetAddon();
 
-            // Apply all operations first
             fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
 
-            // Then ensure wrapping is in place if launch actions exist
             if (config.Actions.Launch.Count > 0 && !exeWrapper.IsWrapped() && exeWrapper.CanWrap())
             {
                 exeWrapper.Wrap();
-            }
-
-            if (launchAfterApply)
-            {
-                launchManager.Launch();
-                return;
             }
 
             MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);

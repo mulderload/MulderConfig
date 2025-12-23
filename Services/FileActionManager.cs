@@ -10,11 +10,11 @@ namespace MulderLauncher.Services
 {
     public class FileActionManager
     {
-        public void ExecuteOperations(List<OperationAction> operations, Dictionary<string, object> selected)
+        public void ExecuteOperations(List<OperationAction> operations, IReadOnlyDictionary<string, object?> selected)
         {
             foreach (var action in operations)
             {
-                if (!WhenResolver.Match(action.When, selected))
+                if (action.When != null && !WhenResolver.Match(action.When, selected))
                     continue;
 
                 try

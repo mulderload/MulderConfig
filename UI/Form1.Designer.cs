@@ -1,16 +1,9 @@
-﻿namespace MulderLauncher
+namespace MulderLauncher.UI
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,10 +15,6 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             comboBoxAddon = new ComboBox();
@@ -69,11 +58,11 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(456, 12);
+            btnSave.Location = new Point(436, 12);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(75, 23);
+            btnSave.Size = new Size(95, 23);
             btnSave.TabIndex = 3;
-            btnSave.Text = "Save";
+            btnSave.Text = "Save Config";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
