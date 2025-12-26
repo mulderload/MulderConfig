@@ -9,7 +9,7 @@ namespace MulderLauncher.Pipeline;
 public sealed class ApplyManager(
     ConfigProvider configProvider,
     SaveManager saveManager,
-    FileActionManager fileActionManager,
+    FileOperationManager FileOperationManager,
     ExeReplacer exeReplacer,
     ModeDetector modeDetector)
 {
@@ -24,7 +24,7 @@ public sealed class ApplyManager(
 
         var selected = selectionProvider.GetChoices();
         selected["Addon"] = selectionProvider.GetAddon();
-        fileActionManager.ExecuteOperations(config.Actions.Operations, selected);
+        FileOperationManager.ExecuteOperations(config.Actions.Operations, selected);
 
         if (config.Actions.Launch is { Count: > 0 } && !modeDetector.IsWrapping())
         {

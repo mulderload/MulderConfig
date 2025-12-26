@@ -9,7 +9,7 @@ using MulderLauncher.Config;
 
 namespace MulderLauncher.Actions.Operations
 {
-    public class FileActionManager
+    public class FileOperationManager
     {
         public void ExecuteOperations(List<OperationAction> operations, IReadOnlyDictionary<string, object?> selected)
         {

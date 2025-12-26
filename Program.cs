@@ -24,8 +24,8 @@ namespace MulderLauncher
             var exeReplacer = new ExeReplacer(configProvider);
             var modeDetector = new ModeDetector(configProvider);
             var saveManager = new SaveManager();
-            var fileActionManager = new FileActionManager();
-            var applyManager = new ApplyManager(configProvider, saveManager, fileActionManager, exeReplacer, modeDetector);
+            var FileOperationManager = new FileOperationManager();
+            var applyManager = new ApplyManager(configProvider, saveManager, FileOperationManager, exeReplacer, modeDetector);
 
             // Wrapper mode must be headless (no UI initialization).
             if (modeDetector.IsWrapping())
