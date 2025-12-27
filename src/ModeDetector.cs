@@ -21,9 +21,4 @@ public sealed class ModeDetector(ConfigModel config, string[] args)
     {
         return args.Any(a => a.Equals("-apply", StringComparison.OrdinalIgnoreCase));
     }
-
-    public bool IsNormalMode()
-    {
-        return !IsLaunchMode() && !IsApplyMode();
-    }
 }
