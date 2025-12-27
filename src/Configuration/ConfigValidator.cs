@@ -16,11 +16,12 @@ public class ConfigValidator
         if (string.IsNullOrWhiteSpace(config.Game.OriginalExe))
             return false;
 
-        if (config.Addons == null || config.Addons.Count == 0)
-            return false;
-
-        if (config.Addons.Any(a => a == null || string.IsNullOrWhiteSpace(a.Title)))
-            return false;
+        // addons is optional
+        if (config.Addons != null)
+        {
+            if (config.Addons.Any(a => a == null || string.IsNullOrWhiteSpace(a.Title)))
+                return false;
+        }
 
         if (config.OptionGroups == null)
             return false;
@@ -28,10 +29,11 @@ public class ConfigValidator
         if (config.Actions == null)
             return false;
 
-        if (config.Actions.Launch == null)
-            return false;
-
-        if (config.Actions.Operations == null)
+        // actions.launch and actions.operations are optional; if missing/null they are treated as empty lists.
+        // However, having no actions at all makes no sense: require at least one action.
+        var launchCount = config.Actions.Launch?.Count ?? 0;
+        var operationsCount = config.Actions.Operations?.Count ?? 0;
+        if (launchCount == 0 && operationsCount == 0)
             return false;
 
         var groupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -83,7 +85,7 @@ public class ConfigValidator
             }
         }
 
-        foreach (var rule in config.Actions.Launch)
+        foreach (var rule in config.Actions.Launch ?? Enumerable.Empty<LaunchAction>())
         {
             if (rule == null)
                 return false;
@@ -101,7 +103,7 @@ public class ConfigValidator
                 return false;
         }
 
-        foreach (var op in config.Actions.Operations)
+        foreach (var op in config.Actions.Operations ?? Enumerable.Empty<OperationAction>())
         {
             if (op == null)
                 return false;

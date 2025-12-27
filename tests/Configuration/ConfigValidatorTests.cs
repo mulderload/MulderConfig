@@ -50,11 +50,11 @@ public class ConfigValidatorTests
     }
 
     [Fact]
-    public void IsValid_ReturnsFalse_WhenAddonListMissing()
+    public void IsValid_ReturnsTrue_WhenAddonListMissing()
     {
         var cfg = MinimalValidConfig();
         cfg.Addons = null;
-        Assert.False(ConfigValidator.IsValid(cfg));
+        Assert.True(ConfigValidator.IsValid(cfg));
     }
 
     [Fact]
@@ -97,4 +97,5 @@ public class ConfigValidatorTests
 
         Assert.False(ConfigValidator.IsValid(cfg));
     }
+
 }

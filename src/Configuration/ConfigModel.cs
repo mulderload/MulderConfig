@@ -48,8 +48,8 @@ public class WhenGroup : Dictionary<string, string>
 
 public class ActionRoot
 {
-    public required List<LaunchAction> Launch { get; set; }
-    public required List<OperationAction> Operations { get; set; }
+    public List<LaunchAction> Launch { get; set; } = new();
+    public List<OperationAction> Operations { get; set; } = new();
 }
 
 public class LaunchAction

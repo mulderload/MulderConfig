@@ -153,4 +153,92 @@ public class ConfigJsonTests
         Assert.True(WhenResolver.Match(config.Actions.Launch[0].When, selected));
         Assert.True(WhenResolver.Match(config.Actions.Operations[0].When, selected));
     }
+
+    [Fact]
+    public void MissingLaunchSection_DefaultsToEmpty_AndConfigIsValid()
+    {
+        var json = @"
+        {
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""addons"": [ { ""title"": ""default"", ""steamId"": 1 } ],
+          ""optionGroups"": [],
+          ""actions"": {
+            ""operations"": [ { ""operation"": ""delete"", ""source"": ""tmp.txt"" } ]
+          }
+        }";
+
+        var config = ParseConfig(json);
+
+        Assert.True(ConfigValidator.IsValid(config));
+        Assert.NotNull(config.Actions.Launch);
+        Assert.Empty(config.Actions.Launch);
+        Assert.NotNull(config.Actions.Operations);
+        Assert.Single(config.Actions.Operations);
+    }
+
+    [Fact]
+    public void MissingOperationsSection_DefaultsToEmpty_AndConfigIsValid()
+    {
+        var json = @"
+        {
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""addons"": [ { ""title"": ""default"", ""steamId"": 1 } ],
+          ""optionGroups"": [],
+          ""actions"": {
+            ""launch"": [ { ""args"": [""-a""] } ]
+          }
+        }";
+
+        var config = ParseConfig(json);
+
+        Assert.True(ConfigValidator.IsValid(config));
+        Assert.NotNull(config.Actions.Operations);
+        Assert.Empty(config.Actions.Operations);
+        Assert.NotNull(config.Actions.Launch);
+        Assert.Single(config.Actions.Launch);
+    }
+
+    [Fact]
+    public void NoActions_IsInvalid()
+    {
+        var json = @"
+        {
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""addons"": [ { ""title"": ""default"", ""steamId"": 1 } ],
+          ""optionGroups"": [],
+          ""actions"": { }
+        }";
+
+        var config = ParseConfig(json);
+        Assert.False(ConfigValidator.IsValid(config));
+    }
+
+    [Fact]
+    public void EmptyLaunchAndOperations_IsInvalid()
+    {
+        var json = @"
+        {
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""addons"": [ { ""title"": ""default"", ""steamId"": 1 } ],
+          ""optionGroups"": [],
+          ""actions"": { ""launch"": [], ""operations"": [] }
+        }";
+
+        var config = ParseConfig(json);
+        Assert.False(ConfigValidator.IsValid(config));
+    }
+
+      [Fact]
+      public void MissingAddons_IsValid()
+      {
+        var json = @"
+        {
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""optionGroups"": [],
+          ""actions"": { ""launch"": [ { ""args"": [""-a""] } ] }
+        }";
+
+        var config = ParseConfig(json);
+        Assert.True(ConfigValidator.IsValid(config));
+      }
 }

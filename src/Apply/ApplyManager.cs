@@ -14,11 +14,12 @@ public sealed class ApplyManager(
         var selected = selectionProvider.GetChoices();
         selected["Title"] = selectionProvider.GetTitle();
 
-        FileOperationManager.ExecuteOperations(config.Actions.Operations, selected);
+        var operations = config.Actions.Operations;
+        if (operations != null && operations.Count > 0)
+            FileOperationManager.ExecuteOperations(operations, selected);
 
-        if (!exeReplacer.IsReplaced())
-        {
+        // If there is no launch section/rules, there is no exe replacement to perform.
+        if ((config.Actions.Launch?.Count ?? 0) > 0 && !exeReplacer.IsReplaced())
             exeReplacer.Replace();
-        }
     }
 }
