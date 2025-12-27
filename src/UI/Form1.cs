@@ -88,7 +88,7 @@ namespace MulderConfig.src.UI
 
         private void ApplyConfig()
         {
-            _applyManager.Apply(_formSelectionProvider, persistSelections: true);
+            _applyManager.Apply(_formSelectionProvider);
 
             MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

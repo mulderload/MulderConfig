@@ -6,25 +6,19 @@ namespace MulderConfig.src.Apply;
 
 public sealed class ApplyManager(
     ConfigModel config,
-    SaveManager saveManager,
-    FileOperationManager FileOperationManager,
     ExeReplacer exeReplacer,
-    ModeDetector modeDetector)
+    FileOperationManager FileOperationManager)
 {
-    public void Apply(ISelectionProvider selectionProvider, bool persistSelections)
+    public void Apply(ISelectionProvider selectionProvider)
     {
-        if (persistSelections)
-        {
-            saveManager.SaveChoices(selectionProvider.GetAddon(), selectionProvider.GetChoices());
-        }
-
         var selected = selectionProvider.GetChoices();
         selected["Addon"] = selectionProvider.GetAddon();
+
         FileOperationManager.ExecuteOperations(config.Actions.Operations, selected);
 
-        if (config.Actions.Launch is { Count: > 0 } && !modeDetector.IsLaunchMode())
+        if (!exeReplacer.IsReplaced())
         {
-            exeReplacer.EnsureReplaced();
+            exeReplacer.Replace();
         }
     }
 }

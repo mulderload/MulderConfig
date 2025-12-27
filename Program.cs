@@ -40,7 +40,7 @@ internal static class Program
         var modeDetector = new ModeDetector(config, args);
         var saveManager = new SaveManager();
         var steamAddonHandler = new SteamAddonHandler(config, args);
-        var applyManager = new ApplyManager(config, saveManager, fileOperationManager, exeReplacer, modeDetector);
+        var applyManager = new ApplyManager(config, exeReplacer, fileOperationManager);
 
         // Handle Steam Addons
         var steamAddonId = steamAddonHandler.ResolveAddonId();
@@ -89,8 +89,7 @@ internal static class Program
 
         var selectionProvider = new SavedSelectionProvider(addonTitle);
 
-        // Apply only: reads save, runs operations + replacement; no saving.
-        applyManager.Apply(selectionProvider, persistSelections: false);
+        applyManager.Apply(selectionProvider);
     }
 
     private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager)

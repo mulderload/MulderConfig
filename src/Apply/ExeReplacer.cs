@@ -80,12 +80,4 @@ public class ExeReplacer(ConfigModel config)
             MessageBox.Show(ex.Message, "Warning: Replacement partially failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
-
-    public void EnsureReplaced()
-    {
-        if (IsReplaced())
-            return;
-
-        Replace();
-    }
 }
