@@ -76,7 +76,7 @@ internal static class Program
             // Normal UI mode
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1(
-                steamAddonId,
+                title,
                 config,
                 applyManager,
                 formBuilder,

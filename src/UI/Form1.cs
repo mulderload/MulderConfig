@@ -6,7 +6,7 @@ namespace MulderConfig.src.UI
 {
     public partial class Form1 : Form
     {
-        private readonly int? _steamAddonId;
+        private readonly string _title;
         private readonly ConfigModel _config;
         private readonly ApplyManager _applyManager;
         private readonly FormBuilder _formBuilder;
@@ -14,9 +14,10 @@ namespace MulderConfig.src.UI
         private readonly FormSelectionProvider _formSelectionProvider;
         private readonly SaveLoader _saveLoader;
         private readonly SaveSaver _saveSaver;
+        private bool _isInitializing;
 
         public Form1(
-            int? steamAddonId,
+            string title,
             ConfigModel config,
             ApplyManager applyManager,
             FormBuilder formBuilder,
@@ -25,7 +26,7 @@ namespace MulderConfig.src.UI
             SaveLoader saveLoader,
             SaveSaver saveSaver)
         {
-            _steamAddonId = steamAddonId;
+            _title = title;
             _config = config;
             _applyManager = applyManager;
             _formBuilder = formBuilder;
@@ -39,27 +40,32 @@ namespace MulderConfig.src.UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            _isInitializing = true;
+
             Text = _config.Game.Name;
             _formBuilder.BuildAddons(_config, comboBoxAddon);
 
-            if (_steamAddonId != null)
+            var initialIndex = comboBoxAddon.Items.IndexOf(_title);
+            if (initialIndex >= 0)
             {
-                var match = _config.Addons.FirstOrDefault(a => a.SteamId == _steamAddonId);
-                if (match != null)
-                {
-                    int index = comboBoxAddon.Items.IndexOf(match.Title);
-                    if (index >= 0)
-                        comboBoxAddon.SelectedIndex = index;
-                }
+                comboBoxAddon.SelectedIndex = initialIndex;
             }
+
+            _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
 
             _formBuilder.BuildForm(_config, panelOptions, UpdateButtons);
             LoadSavedChoices();
+            _formValidator.ApplyWhenConstraints();
             UpdateButtons();
+
+            _isInitializing = false;
         }
 
         private void comboBoxAddon_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_isInitializing)
+                return;
+
             _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
             LoadSavedChoices();
             _formValidator.ApplyWhenConstraints();
