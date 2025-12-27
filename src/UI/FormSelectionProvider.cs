@@ -31,56 +31,6 @@ public class FormSelectionProvider(ConfigModel config) : ISelectionProvider
         return addon ?? "default";
     }
 
-    public void ResetChoices()
-    {
-        foreach (var grp in RadioButtons)
-        {
-            foreach (var rb in grp.Value.Values)
-            {
-                rb.Enabled = true;
-                rb.Checked = false;
-            }
-        }
-
-        foreach (var kv in CheckBoxes)
-        {
-            var cb = kv.Value;
-            if (cb.Checked)
-            {
-                cb.Checked = false;
-                cb.Enabled = true;
-            }
-        }
-    }
-
-    public void ApplyChoices(Dictionary<string, object?> savedChoices)
-    {
-        foreach (var entry in savedChoices)
-        {
-            if (entry.Value is IEnumerable<string> values && entry.Value is not string)
-            {
-                foreach (var value in values)
-                {
-                    if (CheckBoxes.TryGetValue(value, out var cb))
-                    {
-                        cb.Checked = true;
-                    }
-                }
-
-                continue;
-            }
-
-            if (entry.Value is string selected)
-            {
-                var groupName = entry.Key;
-                if (RadioButtons.TryGetValue(groupName, out var radios) && radios.TryGetValue(selected, out var rb))
-                {
-                    rb.Checked = true;
-                }
-            }
-        }
-    }
-
     public Dictionary<string, object?> GetChoices()
     {
         var choices = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);

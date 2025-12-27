@@ -12,6 +12,7 @@ namespace MulderConfig.src.UI
         private readonly FormBuilder _formBuilder;
         private readonly FormValidator _formValidator;
         private readonly FormSelectionProvider _formSelectionProvider;
+        private readonly FormController _formController;
         private readonly SaveLoader _saveLoader;
         private readonly SaveSaver _saveSaver;
         private bool _isInitializing;
@@ -36,6 +37,8 @@ namespace MulderConfig.src.UI
             _saveSaver = saveSaver;
 
             InitializeComponent();
+
+            _formController = new FormController(_formSelectionProvider, _formValidator, btnApply, btnSave);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -53,10 +56,8 @@ namespace MulderConfig.src.UI
 
             _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
 
-            _formBuilder.BuildForm(_config, panelOptions, UpdateButtons);
-            LoadSavedChoices();
-            _formValidator.ApplyWhenConstraints();
-            UpdateButtons();
+            _formBuilder.BuildForm(_config, panelOptions, _formController.UpdateButtons);
+            _formController.LoadSavedChoices(_saveLoader);
 
             _isInitializing = false;
         }
@@ -67,9 +68,7 @@ namespace MulderConfig.src.UI
                 return;
 
             _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
-            LoadSavedChoices();
-            _formValidator.ApplyWhenConstraints();
-            UpdateButtons();
+            _formController.LoadSavedChoices(_saveLoader);
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -94,20 +93,6 @@ namespace MulderConfig.src.UI
 
             _saveSaver.SaveChoices(_formSelectionProvider.GetAddon(), _formSelectionProvider.GetChoices());
             MessageBox.Show($"Configuration saved for {_formSelectionProvider.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void LoadSavedChoices()
-        {
-            var saved = _saveLoader.Load(_formSelectionProvider.GetAddon());
-            _formSelectionProvider.ResetChoices();
-            _formSelectionProvider.ApplyChoices(saved);
-        }
-
-        private void UpdateButtons()
-        {
-            var isValid = _formValidator.IsValid();
-            btnApply.Enabled = isValid;
-            btnSave.Enabled = isValid;
         }
     }
 }
