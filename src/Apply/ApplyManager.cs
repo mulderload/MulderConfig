@@ -22,7 +22,7 @@ public sealed class ApplyManager(
         selected["Addon"] = selectionProvider.GetAddon();
         FileOperationManager.ExecuteOperations(config.Actions.Operations, selected);
 
-        if (config.Actions.Launch is { Count: > 0 } && !modeDetector.IsWrapMode())
+        if (config.Actions.Launch is { Count: > 0 } && !modeDetector.IsLaunchMode())
         {
             exeReplacer.EnsureReplaced();
         }

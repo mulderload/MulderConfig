@@ -54,9 +54,9 @@ internal static class Program
             RunHeadlessApplyMode(config, steamAddonId, applyManager);
             return;
         }
-        else if (modeDetector.IsWrapMode())
+        else if (modeDetector.IsLaunchMode())
         {
-            RunHeadlessWrapperMode(config, exeReplacer, steamAddonId, applyManager);
+            RunHeadlessLaunchMode(config, exeReplacer, steamAddonId, applyManager);
             return;
         }
 
@@ -93,7 +93,7 @@ internal static class Program
         applyManager.Apply(selectionProvider, persistSelections: false);
     }
 
-    private static void RunHeadlessWrapperMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager)
+    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager)
     {
         string? addonTitle = null;
         if (steamAddonId != null)

@@ -5,7 +5,7 @@ namespace MulderConfig.src;
 
 public sealed class ModeDetector(ConfigModel config, string[] args)
 {
-    public bool IsWrapMode()
+    public bool IsLaunchMode()
     {
         var originalExeName = Path.GetFileName(config.Game.OriginalExe);
         var processExeName = Process.GetCurrentProcess().ProcessName + ".exe";
@@ -20,6 +20,6 @@ public sealed class ModeDetector(ConfigModel config, string[] args)
 
     public bool IsNormalMode()
     {
-        return !IsWrapMode() && !IsApplyMode();
+        return !IsLaunchMode() && !IsApplyMode();
     }
 }
