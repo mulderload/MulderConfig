@@ -36,9 +36,10 @@ public sealed class SaveLoader
 
     public Dictionary<string, object?> Load(string addon)
     {
-        var saves = LoadAll();
+        if (_saves == null)
+            throw new InvalidOperationException("LoadAll must be called before Load.");
 
-        if (!saves.TryGetValue(addon, out var save))
+        if (!_saves.TryGetValue(addon, out var save))
             return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
         var normalized = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);

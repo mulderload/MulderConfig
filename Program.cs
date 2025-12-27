@@ -45,9 +45,11 @@ internal static class Program
 
         // Handle Steam Addons
         var steamAddonId = steamAddonHandler.ResolveAddonId();
-        var gameTitle = steamAddonHandler.ResolveAddonTitle(steamAddonId) ?? "_";
+        var addonTitle = steamAddonHandler.ResolveAddonTitle(steamAddonId) ?? "_";
 
         // Select current addon save
+        saveLoader.LoadAll();
+        saveLoader.Load(addonTitle);
 
         // Headless modes
         if (modeDetector.IsApplyMode())
