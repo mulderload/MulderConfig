@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using MulderConfig.src;
 using MulderConfig.src.Actions;
-using MulderConfig.src.Apply;
 using MulderConfig.src.Configuration;
 using Newtonsoft.Json;
 using Xunit;
@@ -47,8 +46,7 @@ public class LaunchManagerTests
             addon: "default",
             choices: new Dictionary<string, object?> { ["Renderer"] = "DX11" });
 
-        var exeReplacer = new ExeReplacer(config);
-        var manager = new LaunchManager(config, selectionProvider, exeReplacer);
+        var manager = new LaunchManager(config, selectionProvider);
 
         var (exePath, workDir, args) = manager.ResolveLaunch();
 
@@ -87,8 +85,7 @@ public class LaunchManagerTests
             addon: "default",
             choices: new Dictionary<string, object?> { ["Renderer"] = "DX9" });
 
-        var exeReplacer = new ExeReplacer(config);
-        var manager = new LaunchManager(config, selectionProvider, exeReplacer);
+        var manager = new LaunchManager(config, selectionProvider);
 
         var (exePath, workDir, args) = manager.ResolveLaunch();
 

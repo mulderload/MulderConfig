@@ -38,7 +38,7 @@ public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvi
         selected["Addon"] = selectionProvider.GetAddon();
 
         // Defaults
-        var exePath = Path.GetFileNameWithoutExtension(config.Game.OriginalExe) + "_o" + Path.GetExtension(config.Game.OriginalExe); // todo Helper and share with exeReplacer
+        var exePath = MakePath(config.Game.OriginalExe);
         var workDir = Application.StartupPath;
         var args = new List<string>();
 
