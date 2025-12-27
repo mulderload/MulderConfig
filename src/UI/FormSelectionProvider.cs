@@ -4,7 +4,7 @@ namespace MulderConfig.src.UI;
 
 public class FormSelectionProvider(ConfigModel config) : ISelectionProvider
 {
-    private string title;
+    private string title = "default";
     public readonly Dictionary<string, Dictionary<string, RadioButton>> RadioButtons = [];
     public readonly Dictionary<string, CheckBox> CheckBoxes = [];
 

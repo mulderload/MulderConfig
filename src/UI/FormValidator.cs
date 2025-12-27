@@ -32,7 +32,9 @@ namespace MulderConfig.src.UI
 
             foreach (var group in config.OptionGroups)
             {
-                if (group.Type == "radioGroup" && formSelectionProvider.RadioButtons.TryGetValue(group.Name, out var radios))
+                if (group.Type == "radioGroup"
+                    && group.Radios != null
+                    && formSelectionProvider.RadioButtons.TryGetValue(group.Name, out var radios))
                 {
                     foreach (var radioRow in group.Radios)
                     {
@@ -41,9 +43,10 @@ namespace MulderConfig.src.UI
 
                         if (radios.TryGetValue(radioRow.Value, out var radioButton))
                         {
-                            bool disable = WhenResolver.Match(radioRow.DisabledWhen, selected);
+                            var disable = WhenResolver.Match(radioRow.DisabledWhen, selected);
                             radioButton.Enabled = !disable;
-                            radioButton.Checked = !disable && radioButton.Checked;
+                            if (disable)
+                                radioButton.Checked = false;
                         }
                     }
                 }
@@ -56,9 +59,10 @@ namespace MulderConfig.src.UI
 
                         if (formSelectionProvider.CheckBoxes.TryGetValue(checkboxRow.Value, out var checkBox))
                         {
-                            bool disable = WhenResolver.Match(checkboxRow.DisabledWhen, selected);
+                            var disable = WhenResolver.Match(checkboxRow.DisabledWhen, selected);
                             checkBox.Enabled = !disable;
-                            checkBox.Checked = !disable && checkBox.Checked;
+                            if (disable)
+                                checkBox.Checked = false;
                         }
                     }
                 }

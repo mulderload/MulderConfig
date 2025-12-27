@@ -54,7 +54,7 @@ namespace MulderConfig.src.UI
                 comboBoxTitle.SelectedIndex = initialIndex;
             }
 
-            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString() ?? "default");
 
             _formBuilder.BuildForm(_config, panelOptions, _formController.UpdateButtons);
             _formController.LoadSavedChoices(_saveLoader);
@@ -67,7 +67,7 @@ namespace MulderConfig.src.UI
             if (_isInitializing)
                 return;
 
-            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString() ?? "default");
             _formController.LoadSavedChoices(_saveLoader);
         }
 
