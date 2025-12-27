@@ -59,7 +59,7 @@ internal static class Program
         }
         else if (modeDetector.IsLaunchMode())
         {
-            RunHeadlessLaunchMode(config, exeReplacer, addonTitle, saveLoader);
+            RunHeadlessLaunchMode(config, addonTitle, saveLoader);
             return;
         }
 
@@ -87,10 +87,10 @@ internal static class Program
         applyManager.Apply(selectionProvider);
     }
 
-    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, string addonTitle, SaveLoader saveLoader)
+    private static void RunHeadlessLaunchMode(ConfigModel config, string addonTitle, SaveLoader saveLoader)
     {
         var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
-        var launchManager = new LaunchManager(config, selectionProvider, exeReplacer);
+        var launchManager = new LaunchManager(config, selectionProvider);
         launchManager.Launch();
     }
 }

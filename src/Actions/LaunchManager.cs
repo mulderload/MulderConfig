@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace MulderConfig.src.Actions;
 
-public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvider, ExeReplacer exeReplacer)
+public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvider)
 {
     public void Launch()
     {
@@ -38,7 +38,7 @@ public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvi
         selected["Addon"] = selectionProvider.GetAddon();
 
         // Defaults
-        var exePath = exeReplacer.GetDefaultLaunchExePath();
+        var exePath = Path.GetFileNameWithoutExtension(config.Game.OriginalExe) + "_o" + Path.GetExtension(config.Game.OriginalExe); // todo Helper and share with exeReplacer
         var workDir = Application.StartupPath;
         var args = new List<string>();
 
