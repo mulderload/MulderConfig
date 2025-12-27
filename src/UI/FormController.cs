@@ -10,7 +10,7 @@ public sealed class FormController(
 {
     public void LoadSavedChoices(SaveLoader saveLoader)
     {
-        var saved = saveLoader.Load(selectionProvider.GetAddon());
+        var saved = saveLoader.Load(selectionProvider.GetTitle());
         ResetChoices();
         ApplyChoices(saved);
 

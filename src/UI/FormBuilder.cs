@@ -14,7 +14,7 @@ public class FormBuilder(FormValidator formValidator, FormSelectionProvider form
         }
 
         comboBox.SelectedIndex = 0;
-        formSelectionProvider.SetAddon(comboBox.SelectedItem?.ToString());
+        formSelectionProvider.SetTitle(comboBox.SelectedItem?.ToString());
     }
 
     public void BuildForm(ConfigModel config, Panel panelOptions, Action updateButtons)

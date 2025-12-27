@@ -1,14 +1,14 @@
 namespace MulderConfig.src.Save;
 
-public class SavedSelectionProvider(SaveLoader saveLoader, string addon) : ISelectionProvider
+public class SavedSelectionProvider(SaveLoader saveLoader, string title) : ISelectionProvider
 {
-    public string GetAddon()
+    public string GetTitle()
     {
-        return addon;
+        return title;
     }
 
     public Dictionary<string, object?> GetChoices()
     {
-        return saveLoader.Load(addon);
+        return saveLoader.Load(title);
     } 
 }

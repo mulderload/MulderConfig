@@ -28,7 +28,7 @@ namespace MulderConfig.src.UI
         public void ApplyWhenConstraints()
         {
             var selected = formSelectionProvider.GetChoices();
-            selected["Addon"] = formSelectionProvider.GetAddon();
+            selected["Addon"] = formSelectionProvider.GetTitle();
 
             foreach (var group in config.OptionGroups)
             {

@@ -54,7 +54,7 @@ namespace MulderConfig.src.UI
                 comboBoxAddon.SelectedIndex = initialIndex;
             }
 
-            _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxAddon.SelectedItem?.ToString());
 
             _formBuilder.BuildForm(_config, panelOptions, _formController.UpdateButtons);
             _formController.LoadSavedChoices(_saveLoader);
@@ -67,7 +67,7 @@ namespace MulderConfig.src.UI
             if (_isInitializing)
                 return;
 
-            _formSelectionProvider.SetAddon(comboBoxAddon.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxAddon.SelectedItem?.ToString());
             _formController.LoadSavedChoices(_saveLoader);
         }
 
@@ -91,8 +91,8 @@ namespace MulderConfig.src.UI
                 return;
             }
 
-            _saveSaver.SaveChoices(_formSelectionProvider.GetAddon(), _formSelectionProvider.GetChoices());
-            MessageBox.Show($"Configuration saved for {_formSelectionProvider.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _saveSaver.SaveChoices(_formSelectionProvider.GetTitle(), _formSelectionProvider.GetChoices());
+            MessageBox.Show($"Configuration saved for {_formSelectionProvider.GetTitle()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

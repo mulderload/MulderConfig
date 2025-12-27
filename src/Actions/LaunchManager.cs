@@ -35,7 +35,7 @@ public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvi
     internal (string exePath, string workDir, string args) ResolveLaunch()
     {
         var selected = selectionProvider.GetChoices();
-        selected["Addon"] = selectionProvider.GetAddon();
+        selected["Addon"] = selectionProvider.GetTitle();
 
         // Defaults
         var exePath = MakePath(config.Game.OriginalExe);
