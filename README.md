@@ -1,2 +1,2 @@
-# MulderLauncher
+# MulderConfig
 

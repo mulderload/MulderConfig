@@ -40,7 +40,7 @@ jobs:
           echo version=$version >> $env:GITHUB_OUTPUT
 
       - name: Publish (framework-dependent, single file)
-        run: dotnet publish ./MulderLauncher.csproj `
+        run: dotnet publish ./MulderConfig.csproj `
                -c Release `
                -r win-x64 `
                --self-contained false `
@@ -54,13 +54,13 @@ jobs:
         run: |
           [Byte[]] $bytes = [System.Convert]::FromBase64String("${{ secrets.CERTIFICATE_BASE64 }}")
           [IO.File]::WriteAllBytes("mulderload.pfx", $bytes)
-          Start-Process "C:/Program Files (x86)/Microsoft SDKs/ClickOnce/SignTool/signtool.exe" "sign /f mulderload.pfx /p ${{ secrets.CERTIFICATE_PASSWORD }} /t http://timestamp.digicert.com /fd sha256 publish/MulderLauncher.exe" -PassThru -Wait
+          Start-Process "C:/Program Files (x86)/Microsoft SDKs/ClickOnce/SignTool/signtool.exe" "sign /f mulderload.pfx /p ${{ secrets.CERTIFICATE_PASSWORD }} /t http://timestamp.digicert.com /fd sha256 publish/MulderConfig.exe" -PassThru -Wait
 
       - name: Create Release
         uses: softprops/action-gh-release@v2.3.3
         with:
           tag_name: ${{ steps.generate_version.outputs.version }}
-          files: publish/MulderLauncher.exe
+          files: publish/MulderConfig.exe
 
 permissions:
   contents: write
