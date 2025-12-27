@@ -32,8 +32,6 @@ internal static class Program
             return;
         }
 
-        // Read and validate saves
-
         // Initialize core components
         var exeReplacer = new ExeReplacer(config);
         var fileOperationManager = new FileOperationManager();
@@ -45,52 +43,47 @@ internal static class Program
 
         // Handle Steam Addons
         var steamAddonId = steamAddonHandler.ResolveAddonId();
-        var addonTitle = steamAddonHandler.ResolveAddonTitle(steamAddonId) ?? "_";
+        var title = steamAddonHandler.ResolveAddonTitle(steamAddonId) ?? config.Game.Name;
 
         // Select current addon save
         saveLoader.LoadAll();
-        saveLoader.Load(addonTitle);
+        var save = saveLoader.Load(title);
+        if (!SaveValidator.IsValid(config, save))
+        {
+            MessageBox.Show($"Invalid configuration for {title}.\nThe save file may be corrupted (delete MulderConfig.save.json).");
+            return;
+        }
 
-        // Headless modes
+        // Run App
         if (modeDetector.IsApplyMode())
         {
-            RunHeadlessApplyMode(addonTitle, applyManager, saveLoader);
-            return;
+            var selectionProvider = new SavedSelectionProvider(saveLoader, title);
+            applyManager.Apply(selectionProvider);
         }
         else if (modeDetector.IsLaunchMode())
         {
-            RunHeadlessLaunchMode(config, addonTitle, saveLoader);
-            return;
+            var selectionProvider = new SavedSelectionProvider(saveLoader, title);
+            var launchManager = new LaunchManager(config, selectionProvider);
+            launchManager.Launch();
         }
+        else
+        {
+            // Initialize UI components
+            var formSelectionProvider = new FormSelectionProvider(config);
+            var formValidator = new FormValidator(config, formSelectionProvider);
+            var formBuilder = new FormBuilder(formValidator, formSelectionProvider);
 
-        // Initialize UI components
-        var formSelectionProvider = new FormSelectionProvider(config);
-        var formValidator = new FormValidator(config, formSelectionProvider);
-        var formBuilder = new FormBuilder(formValidator, formSelectionProvider);
-
-        // Normal UI mode
-        ApplicationConfiguration.Initialize();
-        Application.Run(new Form1(
-            steamAddonId,
-            config,
-            applyManager,
-            formBuilder,
-            formValidator,
-            formSelectionProvider,
-            saveLoader,
-            saveSaver));
-    }
-
-    private static void RunHeadlessApplyMode(string addonTitle, ApplyManager applyManager, SaveLoader saveLoader)
-    {
-        var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
-        applyManager.Apply(selectionProvider);
-    }
-
-    private static void RunHeadlessLaunchMode(ConfigModel config, string addonTitle, SaveLoader saveLoader)
-    {
-        var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
-        var launchManager = new LaunchManager(config, selectionProvider);
-        launchManager.Launch();
+            // Normal UI mode
+            ApplicationConfiguration.Initialize();
+            Application.Run(new Form1(
+                steamAddonId,
+                config,
+                applyManager,
+                formBuilder,
+                formValidator,
+                formSelectionProvider,
+                saveLoader,
+                saveSaver));
+        }
     }
 }

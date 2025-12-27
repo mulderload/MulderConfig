@@ -4,9 +4,9 @@ namespace MulderConfig.src.Save;
 
 public static class SaveValidator
 {
-    public static bool IsValid(ConfigModel config, IReadOnlyDictionary<string, object?> saved)
+    public static bool IsValid(ConfigModel config, Dictionary<string, object?> save)
     {
-        foreach (var entry in saved)
+        foreach (var entry in save)
         {
             var group = config.OptionGroups.FirstOrDefault(g =>
                 g.Name.Equals(entry.Key, StringComparison.OrdinalIgnoreCase));
