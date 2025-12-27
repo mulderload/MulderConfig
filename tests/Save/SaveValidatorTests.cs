@@ -12,7 +12,7 @@ public class SaveValidatorTests
     {
         return new ConfigModel
         {
-            Game = new Game { Name = "Test", OriginalExe = "Game.exe" },
+            Game = new Game { Title = "Test", OriginalExe = "Game.exe" },
             Addons = new List<Addon> { new() { Title = "default" } },
             OptionGroups = new List<OptionGroup>(groups),
             Actions = new ActionRoot { Launch = new List<LaunchAction>(), Operations = new List<OperationAction>() }

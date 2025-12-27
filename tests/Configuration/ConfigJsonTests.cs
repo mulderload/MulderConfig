@@ -53,7 +53,7 @@ public class ConfigJsonTests
     {
         var json = @"
         {
-          ""game"": { ""name"": ""Test Game"", ""originalExe"": ""Game.exe"" },
+          ""game"": { ""title"": ""Test Game"", ""originalExe"": ""Game.exe"" },
           ""optionGroups"": [],
           ""actions"": {
             ""launch"": [
@@ -82,7 +82,7 @@ public class ConfigJsonTests
 
         var config = ParseConfig(json);
 
-        Assert.Equal("Test Game", config.Game.Name);
+        Assert.Equal("Test Game", config.Game.Title);
         Assert.Equal("Game.exe", config.Game.OriginalExe);
 
         Assert.Single(config.Actions.Launch);
@@ -105,7 +105,7 @@ public class ConfigJsonTests
     {
         var json = @"
         {
-          ""game"": { ""name"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
           ""optionGroups"": [],
           ""actions"": {
             ""launch"": [
@@ -139,7 +139,7 @@ public class ConfigJsonTests
     {
         var json = @"
         {
-          ""game"": { ""name"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
           ""optionGroups"": [],
           ""actions"": {
             ""launch"": [ { ""args"": [""-a""] } ],

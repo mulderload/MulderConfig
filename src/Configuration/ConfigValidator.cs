@@ -10,7 +10,7 @@ public class ConfigValidator
         if (config.Game == null)
             return false;
 
-        if (string.IsNullOrWhiteSpace(config.Game.Name))
+        if (string.IsNullOrWhiteSpace(config.Game.Title))
             return false;
 
         if (string.IsNullOrWhiteSpace(config.Game.OriginalExe))

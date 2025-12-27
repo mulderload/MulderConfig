@@ -4,17 +4,20 @@ namespace MulderConfig.src.UI;
 
 public class FormBuilder(FormValidator formValidator, FormSelectionProvider formSelectionProvider)
 {
-    public void BuildAddons(ConfigModel config, ComboBox comboBox)
+    public void BuildComboBox(ConfigModel config, ComboBox comboBox)
     {
         comboBox.Items.Clear();
+        comboBox.Items.Add(config.Game.Title);
+
+        if (config.Addons == null || config.Addons.Count == 0) {
+            comboBox.Enabled = false;
+            return;
+        }
 
         foreach (var addon in config.Addons)
         {
             comboBox.Items.Add(addon.Title);
         }
-
-        comboBox.SelectedIndex = 0;
-        formSelectionProvider.SetTitle(comboBox.SelectedItem?.ToString());
     }
 
     public void BuildForm(ConfigModel config, Panel panelOptions, Action updateButtons)

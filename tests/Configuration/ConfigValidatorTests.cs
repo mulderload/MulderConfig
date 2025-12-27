@@ -10,7 +10,7 @@ public class ConfigValidatorTests
     {
         return new ConfigModel
         {
-            Game = new Game { Name = "Test", OriginalExe = "Game.exe" },
+            Game = new Game { Title = "Test", OriginalExe = "Game.exe" },
             Addons = new List<Addon> { new() { Title = "default" } },
             OptionGroups = new List<OptionGroup>
             {

@@ -45,16 +45,16 @@ namespace MulderConfig.src.UI
         {
             _isInitializing = true;
 
-            Text = _config.Game.Name;
-            _formBuilder.BuildAddons(_config, comboBoxAddon);
+            Text = _config.Game.Title;
+            _formBuilder.BuildComboBox(_config, comboBoxTitle);
 
-            var initialIndex = comboBoxAddon.Items.IndexOf(_title);
+            var initialIndex = comboBoxTitle.Items.IndexOf(_title);
             if (initialIndex >= 0)
             {
-                comboBoxAddon.SelectedIndex = initialIndex;
+                comboBoxTitle.SelectedIndex = initialIndex;
             }
 
-            _formSelectionProvider.SetTitle(comboBoxAddon.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString());
 
             _formBuilder.BuildForm(_config, panelOptions, _formController.UpdateButtons);
             _formController.LoadSavedChoices(_saveLoader);
@@ -62,12 +62,12 @@ namespace MulderConfig.src.UI
             _isInitializing = false;
         }
 
-        private void comboBoxAddon_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBoxTitle_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_isInitializing)
                 return;
 
-            _formSelectionProvider.SetTitle(comboBoxAddon.SelectedItem?.ToString());
+            _formSelectionProvider.SetTitle(comboBoxTitle.SelectedItem?.ToString());
             _formController.LoadSavedChoices(_saveLoader);
         }
 

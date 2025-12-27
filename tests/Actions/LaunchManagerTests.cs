@@ -12,9 +12,9 @@ namespace MulderConfig.tests.Actions;
 
 public class LaunchManagerTests
 {
-    private sealed class TestSelectionProvider(string addon, Dictionary<string, object?> choices) : ISelectionProvider
+    private sealed class TestSelectionProvider(string title, Dictionary<string, object?> choices) : ISelectionProvider
     {
-        public string GetAddon() => addon;
+    public string GetTitle() => title;
         public Dictionary<string, object?> GetChoices() => choices;
     }
 
@@ -26,7 +26,7 @@ public class LaunchManagerTests
     {
         var json = @"
         {
-          ""game"": { ""name"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
           ""optionGroups"": [],
           ""actions"": {
             ""launch"": [
@@ -43,7 +43,7 @@ public class LaunchManagerTests
         var config = ParseConfig(json);
 
         var selectionProvider = new TestSelectionProvider(
-            addon: "default",
+            title: "default",
             choices: new Dictionary<string, object?> { ["Renderer"] = "DX11" });
 
         var manager = new LaunchManager(config, selectionProvider);
@@ -60,7 +60,7 @@ public class LaunchManagerTests
     {
         var json = @"
         {
-          ""game"": { ""name"": ""Test"", ""originalExe"": ""Game.exe"" },
+          ""game"": { ""title"": ""Test"", ""originalExe"": ""Game.exe"" },
           ""optionGroups"": [],
           ""actions"": {
             ""launch"": [
@@ -82,7 +82,7 @@ public class LaunchManagerTests
         var config = ParseConfig(json);
 
         var selectionProvider = new TestSelectionProvider(
-            addon: "default",
+            title: "default",
             choices: new Dictionary<string, object?> { ["Renderer"] = "DX9" });
 
         var manager = new LaunchManager(config, selectionProvider);

@@ -17,23 +17,23 @@ namespace MulderConfig.src.UI
 
         private void InitializeComponent()
         {
-            comboBoxAddon = new ComboBox();
+            comboBoxTitle = new ComboBox();
             panelOptions = new Panel();
             btnApply = new Button();
             btnSave = new Button();
             SuspendLayout();
             // 
-            // comboBoxAddon
+            // comboBoxTitle
             // 
-            comboBoxAddon.BackColor = Color.FromArgb(89, 101, 119);
-            comboBoxAddon.Font = new Font("Segoe UI", 9F);
-            comboBoxAddon.ForeColor = SystemColors.HighlightText;
-            comboBoxAddon.FormattingEnabled = true;
-            comboBoxAddon.Location = new Point(12, 12);
-            comboBoxAddon.Name = "comboBoxAddon";
-            comboBoxAddon.Size = new Size(418, 23);
-            comboBoxAddon.TabIndex = 0;
-            comboBoxAddon.SelectedIndexChanged += comboBoxAddon_SelectedIndexChanged;
+            comboBoxTitle.BackColor = Color.FromArgb(89, 101, 119);
+            comboBoxTitle.Font = new Font("Segoe UI", 9F);
+            comboBoxTitle.ForeColor = SystemColors.HighlightText;
+            comboBoxTitle.FormattingEnabled = true;
+            comboBoxTitle.Location = new Point(12, 12);
+            comboBoxTitle.Name = "comboBoxTitle";
+            comboBoxTitle.Size = new Size(418, 23);
+            comboBoxTitle.TabIndex = 0;
+            comboBoxTitle.SelectedIndexChanged += comboBoxTitle_SelectedIndexChanged;
             // 
             // panelOptions
             // 
@@ -76,7 +76,7 @@ namespace MulderConfig.src.UI
             Controls.Add(btnSave);
             Controls.Add(btnApply);
             Controls.Add(panelOptions);
-            Controls.Add(comboBoxAddon);
+            Controls.Add(comboBoxTitle);
             Name = "Form1";
             Padding = new Padding(0, 0, 0, 20);
             StartPosition = FormStartPosition.CenterScreen;
@@ -88,7 +88,7 @@ namespace MulderConfig.src.UI
 
         #endregion
 
-        private ComboBox comboBoxAddon;
+        private ComboBox comboBoxTitle;
         private Panel panelOptions;
         private Button btnApply;
         private Button btnSave;

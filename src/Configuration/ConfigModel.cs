@@ -12,16 +12,14 @@ public class ConfigModel
 
 public class Game
 {
-    [JsonProperty("name")]
-    public required string Name { get; set; }
-
+    public required string Title { get; set; }
     public required string OriginalExe { get; set; }
 }
 
 public class Addon
 {
     public required string Title { get; set; }
-    public int? SteamId { get; set; }
+    public int SteamId { get; set; }
 }
 
 public class OptionGroup

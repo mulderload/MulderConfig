@@ -20,14 +20,14 @@ public sealed class SteamAddonHandler(ConfigModel config, string[] args)
 
     public string? ResolveAddonTitle(int? steamAddonId)
     {
-        if (steamAddonId == null)
+        if (steamAddonId is null)
             return null;
 
-        string? addonTitle = null;
+        var addons = config.Addons;
+        if (addons is null || addons.Count == 0)
+            return null;
 
-        addonTitle = config.Addons.FirstOrDefault(a => a.SteamId == steamAddonId)?.Title;
-
-        addonTitle ??= config.Addons.FirstOrDefault()?.Title;
-        return addonTitle;
+        return addons.FirstOrDefault(a => a.SteamId == steamAddonId)?.Title
+            ?? addons[0].Title;
     }
 }

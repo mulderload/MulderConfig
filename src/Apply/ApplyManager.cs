@@ -12,7 +12,7 @@ public sealed class ApplyManager(
     public void Apply(ISelectionProvider selectionProvider)
     {
         var selected = selectionProvider.GetChoices();
-        selected["Addon"] = selectionProvider.GetTitle();
+        selected["Title"] = selectionProvider.GetTitle();
 
         FileOperationManager.ExecuteOperations(config.Actions.Operations, selected);
 
