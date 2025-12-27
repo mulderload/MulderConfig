@@ -61,12 +61,12 @@ internal static class Program
         }
 
         // Initialize UI components
-        ApplicationConfiguration.Initialize();
         var formSelectionProvider = new FormSelectionProvider(config);
         var formValidator = new FormValidator(config, formSelectionProvider);
         var formBuilder = new FormBuilder(formValidator, formSelectionProvider);
 
         // Normal UI mode
+        ApplicationConfiguration.Initialize();
         Application.Run(new Form1(
             steamAddonId,
             config,

@@ -2,6 +2,9 @@ using System.Diagnostics;
 using MulderConfig.src.Configuration;
 using MulderConfig.src.Logic;
 using MulderConfig.src.Apply;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("MulderConfigTests")]
 
 namespace MulderConfig.src.Actions;
 
@@ -29,7 +32,7 @@ public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvi
         process.Start();
     }
 
-    private (string exePath, string workDir, string args) ResolveLaunch()
+    internal (string exePath, string workDir, string args) ResolveLaunch()
     {
         var selected = selectionProvider.GetChoices();
         selected["Addon"] = selectionProvider.GetAddon();
