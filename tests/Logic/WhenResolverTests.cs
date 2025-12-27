@@ -6,7 +6,7 @@ using Xunit;
 
 namespace MulderConfig.tests.Logic;
 
-public class WhenResolverJsonTests
+public class WhenResolverTests
 {
     private static List<WhenGroup> ParseWhen(string json, string prop = "when")
     {
