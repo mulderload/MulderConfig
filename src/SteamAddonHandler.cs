@@ -4,14 +4,12 @@ namespace MulderConfig.src;
 
 public sealed class SteamAddonHandler(ConfigModel config, string[] args)
 {
-    private readonly string[] _args = args;
-
     public int? ResolveAddonId()
     {
-        for (int i = 0; i < _args.Length - 1; i++)
+        for (int i = 0; i < args.Length - 1; i++)
         {
-            if (_args[i].Equals("-addon", StringComparison.OrdinalIgnoreCase)
-                && int.TryParse(_args[i + 1], out int addonId))
+            if (args[i].Equals("-addon", StringComparison.OrdinalIgnoreCase)
+                && int.TryParse(args[i + 1], out int addonId))
             {
                 return addonId;
             }
