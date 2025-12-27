@@ -31,7 +31,7 @@ namespace MulderConfig.src.UI
             comboBoxAddon.FormattingEnabled = true;
             comboBoxAddon.Location = new Point(12, 12);
             comboBoxAddon.Name = "comboBoxAddon";
-            comboBoxAddon.Size = new Size(438, 23);
+            comboBoxAddon.Size = new Size(418, 23);
             comboBoxAddon.TabIndex = 0;
             comboBoxAddon.SelectedIndexChanged += comboBoxAddon_SelectedIndexChanged;
             // 
