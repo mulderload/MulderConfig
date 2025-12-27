@@ -54,12 +54,12 @@ internal static class Program
         // Headless modes
         if (modeDetector.IsApplyMode())
         {
-            RunHeadlessApplyMode(config, steamAddonId, applyManager, saveLoader);
+            RunHeadlessApplyMode(addonTitle, applyManager, saveLoader);
             return;
         }
         else if (modeDetector.IsLaunchMode())
         {
-            RunHeadlessLaunchMode(config, exeReplacer, steamAddonId, applyManager, saveLoader);
+            RunHeadlessLaunchMode(config, exeReplacer, addonTitle, saveLoader);
             return;
         }
 
@@ -81,35 +81,14 @@ internal static class Program
             saveSaver));
     }
 
-    private static void RunHeadlessApplyMode(ConfigModel config, int? steamAddonId, ApplyManager applyManager, SaveLoader saveLoader)
+    private static void RunHeadlessApplyMode(string addonTitle, ApplyManager applyManager, SaveLoader saveLoader)
     {
-        string? addonTitle = null;
-        if (steamAddonId != null)
-            addonTitle = config.Addons.FirstOrDefault(a => a.SteamId == steamAddonId)?.Title;
-
-        addonTitle ??= config.Addons.FirstOrDefault()?.Title;
-        if (addonTitle == null)
-            return;
-
         var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
-
         applyManager.Apply(selectionProvider);
     }
 
-    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager, SaveLoader saveLoader)
+    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, string addonTitle, SaveLoader saveLoader)
     {
-        string? addonTitle = null;
-        if (steamAddonId != null)
-        {
-            addonTitle = config.Addons.FirstOrDefault(a => a.SteamId == steamAddonId)?.Title;
-        }
-
-        addonTitle ??= config.Addons.FirstOrDefault()?.Title;
-        if (addonTitle == null)
-        {
-            return;
-        }
-
         var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
         var launchManager = new LaunchManager(config, selectionProvider, exeReplacer);
         launchManager.Launch();
