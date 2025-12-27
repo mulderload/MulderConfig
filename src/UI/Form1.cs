@@ -12,7 +12,8 @@ namespace MulderConfig.src.UI
         private readonly FormBuilder _formBuilder;
         private readonly FormValidator _formValidator;
         private readonly FormSelectionProvider _formSelectionProvider;
-        private readonly SaveManager _saveManager;
+        private readonly SaveLoader _saveLoader;
+        private readonly SaveSaver _saveSaver;
 
         public Form1(
             int? steamAddonId,
@@ -21,7 +22,8 @@ namespace MulderConfig.src.UI
             FormBuilder formBuilder,
             FormValidator formValidator,
             FormSelectionProvider formSelectionProvider,
-            SaveManager saveManager)
+            SaveLoader saveLoader,
+            SaveSaver saveSaver)
         {
             _steamAddonId = steamAddonId;
             _config = config;
@@ -29,7 +31,8 @@ namespace MulderConfig.src.UI
             _formBuilder = formBuilder;
             _formValidator = formValidator;
             _formSelectionProvider = formSelectionProvider;
-            _saveManager = saveManager;
+            _saveLoader = saveLoader;
+            _saveSaver = saveSaver;
 
             InitializeComponent();
         }
@@ -82,7 +85,7 @@ namespace MulderConfig.src.UI
                 return;
             }
 
-            _saveManager.SaveChoices(_formSelectionProvider.GetAddon(), _formSelectionProvider.GetChoices());
+            _saveSaver.SaveChoices(_formSelectionProvider.GetAddon(), _formSelectionProvider.GetChoices());
             MessageBox.Show($"Configuration saved for {_formSelectionProvider.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -95,7 +98,7 @@ namespace MulderConfig.src.UI
 
         private void LoadSavedChoices()
         {
-            var saved = _saveManager.LoadChoices(_formSelectionProvider.GetAddon());
+            var saved = _saveLoader.Load(_formSelectionProvider.GetAddon());
             _formSelectionProvider.ResetChoices();
             _formSelectionProvider.ApplyChoices(saved);
         }

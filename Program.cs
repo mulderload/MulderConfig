@@ -38,7 +38,8 @@ internal static class Program
         var exeReplacer = new ExeReplacer(config);
         var fileOperationManager = new FileOperationManager();
         var modeDetector = new ModeDetector(config, args);
-        var saveManager = new SaveManager();
+        var saveLoader = new SaveLoader();
+        var saveSaver = new SaveSaver(saveLoader);
         var steamAddonHandler = new SteamAddonHandler(config, args);
         var applyManager = new ApplyManager(config, exeReplacer, fileOperationManager);
 
@@ -51,12 +52,12 @@ internal static class Program
         // Headless modes
         if (modeDetector.IsApplyMode())
         {
-            RunHeadlessApplyMode(config, steamAddonId, applyManager);
+            RunHeadlessApplyMode(config, steamAddonId, applyManager, saveLoader);
             return;
         }
         else if (modeDetector.IsLaunchMode())
         {
-            RunHeadlessLaunchMode(config, exeReplacer, steamAddonId, applyManager);
+            RunHeadlessLaunchMode(config, exeReplacer, steamAddonId, applyManager, saveLoader);
             return;
         }
 
@@ -74,10 +75,11 @@ internal static class Program
             formBuilder,
             formValidator,
             formSelectionProvider,
-            saveManager));
+            saveLoader,
+            saveSaver));
     }
 
-    private static void RunHeadlessApplyMode(ConfigModel config, int? steamAddonId, ApplyManager applyManager)
+    private static void RunHeadlessApplyMode(ConfigModel config, int? steamAddonId, ApplyManager applyManager, SaveLoader saveLoader)
     {
         string? addonTitle = null;
         if (steamAddonId != null)
@@ -87,12 +89,12 @@ internal static class Program
         if (addonTitle == null)
             return;
 
-        var selectionProvider = new SavedSelectionProvider(addonTitle);
+        var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
 
         applyManager.Apply(selectionProvider);
     }
 
-    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager)
+    private static void RunHeadlessLaunchMode(ConfigModel config, ExeReplacer exeReplacer, int? steamAddonId, ApplyManager applyManager, SaveLoader saveLoader)
     {
         string? addonTitle = null;
         if (steamAddonId != null)
@@ -106,7 +108,7 @@ internal static class Program
             return;
         }
 
-        var selectionProvider = new SavedSelectionProvider(addonTitle);
+        var selectionProvider = new SavedSelectionProvider(saveLoader, addonTitle);
         var launchManager = new LaunchManager(config, selectionProvider, exeReplacer);
         launchManager.Launch();
     }
