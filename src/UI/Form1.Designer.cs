@@ -19,7 +19,7 @@ namespace MulderConfig.src.UI
         {
             comboBoxAddon = new ComboBox();
             panelOptions = new Panel();
-            btnLaunch = new Button();
+            btnApply = new Button();
             btnSave = new Button();
             SuspendLayout();
             // 
@@ -46,15 +46,15 @@ namespace MulderConfig.src.UI
             panelOptions.Size = new Size(600, 60);
             panelOptions.TabIndex = 1;
             // 
-            // btnLaunch
+            // btnApply
             // 
-            btnLaunch.Location = new Point(537, 12);
-            btnLaunch.Name = "btnLaunch";
-            btnLaunch.Size = new Size(75, 23);
-            btnLaunch.TabIndex = 2;
-            btnLaunch.Text = "Apply";
-            btnLaunch.UseVisualStyleBackColor = true;
-            btnLaunch.Click += btnLaunch_Click;
+            btnApply.Location = new Point(537, 12);
+            btnApply.Name = "btnApply";
+            btnApply.Size = new Size(75, 23);
+            btnApply.TabIndex = 2;
+            btnApply.Text = "Apply";
+            btnApply.UseVisualStyleBackColor = true;
+            btnApply.Click += btnApply_Click;
             // 
             // btnSave
             // 
@@ -74,7 +74,7 @@ namespace MulderConfig.src.UI
             BackColor = Color.FromArgb(35, 35, 45);
             ClientSize = new Size(624, 341);
             Controls.Add(btnSave);
-            Controls.Add(btnLaunch);
+            Controls.Add(btnApply);
             Controls.Add(panelOptions);
             Controls.Add(comboBoxAddon);
             Name = "Form1";
@@ -90,7 +90,7 @@ namespace MulderConfig.src.UI
 
         private ComboBox comboBoxAddon;
         private Panel panelOptions;
-        private Button btnLaunch;
+        private Button btnApply;
         private Button btnSave;
     }
 }

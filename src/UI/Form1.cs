@@ -72,7 +72,7 @@ namespace MulderConfig.src.UI
             UpdateButtons();
         }
 
-        private void btnLaunch_Click(object sender, EventArgs e)
+        private void btnApply_Click(object sender, EventArgs e)
         {
             if (!_formValidator.IsValid())
             {
@@ -80,7 +80,8 @@ namespace MulderConfig.src.UI
                 return;
             }
 
-            ApplyConfig();
+            _applyManager.Apply(_formSelectionProvider);
+            MessageBox.Show("Done.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -95,13 +96,6 @@ namespace MulderConfig.src.UI
             MessageBox.Show($"Configuration saved for {_formSelectionProvider.GetAddon()}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void ApplyConfig()
-        {
-            _applyManager.Apply(_formSelectionProvider);
-
-            MessageBox.Show("Applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
         private void LoadSavedChoices()
         {
             var saved = _saveLoader.Load(_formSelectionProvider.GetAddon());
@@ -112,7 +106,7 @@ namespace MulderConfig.src.UI
         private void UpdateButtons()
         {
             var isValid = _formValidator.IsValid();
-            btnLaunch.Enabled = isValid;
+            btnApply.Enabled = isValid;
             btnSave.Enabled = isValid;
         }
     }
