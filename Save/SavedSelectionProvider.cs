@@ -1,4 +1,4 @@
-namespace MulderConfig.src.Save;
+namespace MulderConfig.Save;
 
 public class SavedSelectionProvider(SaveLoader saveLoader, string title) : ISelectionProvider
 {

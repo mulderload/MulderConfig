@@ -1,6 +1,6 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src;
+namespace MulderConfig;
 
 public sealed class SteamAddonHandler(ConfigModel config, string[] args)
 {

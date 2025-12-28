@@ -1,9 +1,9 @@
-using MulderConfig.src.Actions;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Save;
-using MulderConfig.src.Apply;
-using MulderConfig.src.UI;
-using MulderConfig.src;
+using MulderConfig.Actions;
+using MulderConfig.Configuration;
+using MulderConfig.Save;
+using MulderConfig.Apply;
+using MulderConfig.UI;
+using MulderConfig;
 
 namespace MulderConfig;
 

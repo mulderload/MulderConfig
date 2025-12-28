@@ -1,4 +1,4 @@
-namespace MulderConfig.src;
+namespace MulderConfig;
 
 public interface ISelectionProvider
 {

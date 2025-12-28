@@ -1,6 +1,6 @@
-using MulderConfig.src.Save;
+using MulderConfig.Save;
 
-namespace MulderConfig.src.UI;
+namespace MulderConfig.UI;
 
 public sealed class FormController(
     FormSelectionProvider selectionProvider,

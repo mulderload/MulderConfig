@@ -1,6 +1,6 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src.Apply;
+namespace MulderConfig.Apply;
 
 public class ExeReplacer(ConfigModel config)
 {

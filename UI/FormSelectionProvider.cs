@@ -1,6 +1,6 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src.UI;
+namespace MulderConfig.UI;
 
 public class FormSelectionProvider(ConfigModel config) : ISelectionProvider
 {

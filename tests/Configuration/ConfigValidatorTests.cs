@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 using Xunit;
 
-namespace MulderConfig.tests.Configuration;
+namespace MulderConfigTests.Configuration;
 
 public class ConfigValidatorTests
 {

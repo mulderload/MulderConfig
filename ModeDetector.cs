@@ -1,7 +1,7 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 using System.Diagnostics;
 
-namespace MulderConfig.src;
+namespace MulderConfig;
 
 public sealed class ModeDetector(ConfigModel config, string[] args)
 {

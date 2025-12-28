@@ -1,4 +1,4 @@
-namespace MulderConfig.src.UI
+namespace MulderConfig.UI
 {
     partial class Form1
     {

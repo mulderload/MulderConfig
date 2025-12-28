@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using MulderConfig.src.Logic;
-using MulderConfig.src.Configuration;
+using MulderConfig.Logic;
+using MulderConfig.Configuration;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace MulderConfig.tests.Configuration;
+namespace MulderConfigTests.Configuration;
 
 public class ConfigJsonTests
 {

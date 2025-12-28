@@ -1,8 +1,8 @@
-using MulderConfig.src.Save;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Apply;
+using MulderConfig.Save;
+using MulderConfig.Configuration;
+using MulderConfig.Apply;
 
-namespace MulderConfig.src.UI
+namespace MulderConfig.UI
 {
     public partial class Form1 : Form
     {

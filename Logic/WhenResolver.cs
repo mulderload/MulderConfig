@@ -1,6 +1,6 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src.Logic;
+namespace MulderConfig.Logic;
 
 
 public static class WhenResolver

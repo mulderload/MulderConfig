@@ -1,7 +1,7 @@
-using MulderConfig.src.Logic;
-using MulderConfig.src.Configuration;
+using MulderConfig.Logic;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src.UI
+namespace MulderConfig.UI
 {
     public class FormValidator(ConfigModel config, FormSelectionProvider formSelectionProvider)
     {

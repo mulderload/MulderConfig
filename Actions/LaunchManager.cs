@@ -1,12 +1,12 @@
 using System.Diagnostics;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Logic;
-using MulderConfig.src.Apply;
+using MulderConfig.Configuration;
+using MulderConfig.Logic;
+using MulderConfig.Apply;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MulderConfigTests")]
 
-namespace MulderConfig.src.Actions;
+namespace MulderConfig.Actions;
 
 public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvider)
 {

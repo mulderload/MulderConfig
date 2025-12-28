@@ -1,4 +1,4 @@
-namespace MulderConfig.src.Configuration;
+namespace MulderConfig.Configuration;
 
 public class ConfigValidator
 {

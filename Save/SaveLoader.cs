@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MulderConfig.src.Save;
+namespace MulderConfig.Save;
 
 public sealed class SaveLoader
 {

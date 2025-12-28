@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Logic;
+using MulderConfig.Configuration;
+using MulderConfig.Logic;
 
-namespace MulderConfig.src.Actions;
+namespace MulderConfig.Actions;
 
 public class FileOperationManager
 {

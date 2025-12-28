@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace MulderConfig.src.Configuration;
+namespace MulderConfig.Configuration;
 
 public class ConfigProvider
 {

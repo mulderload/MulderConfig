@@ -21,13 +21,16 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Run unit tests
+        run: dotnet test .\Tests\MulderConfigTests.csproj -c Release --no-restore
+
       - name: Generate Version
         id: generate_version
         shell: pwsh
         run: |
-          $date = Get-Date -Format "yy.MM.dd"
+          $base = Get-Date -Format "yy.MM"
           git fetch --tags
-          $tags = git tag -l "$date.*"
+          $tags = git tag -l "$base.*"
           Write-Host "Tags: $($tags -join ', ')"
           if ($tags) {
             $last = $tags | ForEach-Object { ($_ -split '\.')[-1] } | Sort-Object {[int]$_} -Descending | Select-Object -First 1
@@ -35,7 +38,7 @@ jobs:
           } else {
             $next = 1
           }
-          $version = "$date.$next"
+          $version = "$base.$next"
           Write-Host "Generated version: $version"
           echo version=$version >> $env:GITHUB_OUTPUT
 

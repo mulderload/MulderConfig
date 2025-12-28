@@ -1,6 +1,6 @@
-using MulderConfig.src.Configuration;
+using MulderConfig.Configuration;
 
-namespace MulderConfig.src.Save;
+namespace MulderConfig.Save;
 
 public static class SaveValidator
 {

@@ -1,8 +1,8 @@
-using MulderConfig.src.Actions;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Save;
+using MulderConfig.Actions;
+using MulderConfig.Configuration;
+using MulderConfig.Save;
 
-namespace MulderConfig.src.Apply;
+namespace MulderConfig.Apply;
 
 public sealed class ApplyManager(
     ConfigModel config,

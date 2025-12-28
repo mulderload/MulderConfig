@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using MulderConfig.src.Configuration;
-using MulderConfig.src.Save;
+using MulderConfig.Configuration;
+using MulderConfig.Save;
 using Xunit;
 
-namespace MulderConfig.tests.Save;
+namespace MulderConfigTests.Save;
 
 public class SaveValidatorTests
 {

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MulderConfig", "MulderConfig.csproj", "{756D4323-BB54-47B1-8923-4738973DB42A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MulderConfigTests", "Tests\MulderConfigTests.csproj", "{57E5364F-99FE-4DC3-B2F1-2CEB7769160D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{756D4323-BB54-47B1-8923-4738973DB42A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{756D4323-BB54-47B1-8923-4738973DB42A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{756D4323-BB54-47B1-8923-4738973DB42A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E5364F-99FE-4DC3-B2F1-2CEB7769160D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E5364F-99FE-4DC3-B2F1-2CEB7769160D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E5364F-99FE-4DC3-B2F1-2CEB7769160D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E5364F-99FE-4DC3-B2F1-2CEB7769160D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

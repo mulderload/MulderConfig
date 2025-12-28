@@ -2,13 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using MulderConfig.src;
-using MulderConfig.src.Actions;
-using MulderConfig.src.Configuration;
+using MulderConfig;
+using MulderConfig.Actions;
+using MulderConfig.Configuration;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace MulderConfig.tests.Actions;
+namespace MulderConfigTests.Actions;
 
 public class LaunchManagerTests
 {
