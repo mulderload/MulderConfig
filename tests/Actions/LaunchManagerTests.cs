@@ -12,12 +12,6 @@ namespace MulderConfigTests.Actions;
 
 public class LaunchManagerTests
 {
-    private sealed class TestSelectionProvider(string title, Dictionary<string, object?> choices) : ISelectionProvider
-    {
-    public string GetTitle() => title;
-        public Dictionary<string, object?> GetChoices() => choices;
-    }
-
     private static ConfigModel ParseConfig(string json)
         => JsonConvert.DeserializeObject<ConfigModel>(json)!;
 
@@ -42,11 +36,10 @@ public class LaunchManagerTests
 
         var config = ParseConfig(json);
 
-        var selectionProvider = new TestSelectionProvider(
-            title: "default",
-            choices: new Dictionary<string, object?> { ["Renderer"] = "DX11" });
-
-        var manager = new LaunchManager(config, selectionProvider);
+        var manager = new LaunchManager(
+          config,
+          title: "default",
+          choices: new Dictionary<string, object?> { ["Renderer"] = "DX11" });
 
         var (exePath, workDir, args) = manager.ResolveLaunch();
 
@@ -81,11 +74,10 @@ public class LaunchManagerTests
 
         var config = ParseConfig(json);
 
-        var selectionProvider = new TestSelectionProvider(
-            title: "default",
-            choices: new Dictionary<string, object?> { ["Renderer"] = "DX9" });
-
-        var manager = new LaunchManager(config, selectionProvider);
+        var manager = new LaunchManager(
+          config,
+          title: "default",
+          choices: new Dictionary<string, object?> { ["Renderer"] = "DX9" });
 
         var (exePath, workDir, args) = manager.ResolveLaunch();
 

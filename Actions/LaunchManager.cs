@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace MulderConfig.Actions;
 
-public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvider)
+public class LaunchManager(ConfigModel config, string title, IReadOnlyDictionary<string, object?> choices)
 {
     public void Launch()
     {
@@ -34,8 +34,10 @@ public class LaunchManager(ConfigModel config, ISelectionProvider selectionProvi
 
     internal (string exePath, string workDir, string args) ResolveLaunch()
     {
-        var selected = selectionProvider.GetChoices();
-        selected["Title"] = selectionProvider.GetTitle();
+        var selected = new Dictionary<string, object?>(choices, StringComparer.OrdinalIgnoreCase)
+        {
+            ["Title"] = title
+        };
 
         // Defaults
         var exePath = MakePath(config.Game.OriginalExe);

@@ -11,8 +11,15 @@ public sealed class ApplyManager(
 {
     public void Apply(ISelectionProvider selectionProvider)
     {
-        var selected = selectionProvider.GetChoices();
-        selected["Title"] = selectionProvider.GetTitle();
+        Apply(selectionProvider.GetTitle(), selectionProvider.GetChoices());
+    }
+
+    public void Apply(string title, IReadOnlyDictionary<string, object?> choices)
+    {
+        var selected = new Dictionary<string, object?>(choices, StringComparer.OrdinalIgnoreCase)
+        {
+            ["Title"] = title
+        };
 
         var operations = config.Actions.Operations;
         if (operations != null && operations.Count > 0)

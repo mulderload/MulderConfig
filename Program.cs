@@ -57,13 +57,11 @@ internal static class Program
         // Run App
         if (modeDetector.IsApplyMode())
         {
-            var selectionProvider = new SavedSelectionProvider(saveLoader, title);
-            applyManager.Apply(selectionProvider);
+            applyManager.Apply(title, save);
         }
         else if (modeDetector.IsLaunchMode())
         {
-            var selectionProvider = new SavedSelectionProvider(saveLoader, title);
-            var launchManager = new LaunchManager(config, selectionProvider);
+            var launchManager = new LaunchManager(config, title, save);
             launchManager.Launch();
         }
         else
