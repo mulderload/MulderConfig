@@ -98,4 +98,36 @@ public class ConfigValidatorTests
         Assert.False(ConfigValidator.IsValid(cfg));
     }
 
+    [Fact]
+    public void IsValid_ReturnsFalse_WhenSetReadOnlyHasNoFiles()
+    {
+        var cfg = MinimalValidConfig();
+        cfg.Actions.Operations = new List<OperationAction>
+        {
+            new()
+            {
+                Operation = "setReadOnly",
+                Files = new List<string>()
+            }
+        };
+
+        Assert.False(ConfigValidator.IsValid(cfg));
+    }
+
+    [Fact]
+    public void IsValid_ReturnsTrue_WhenSetReadOnlyHasFiles()
+    {
+        var cfg = MinimalValidConfig();
+        cfg.Actions.Operations = new List<OperationAction>
+        {
+            new()
+            {
+                Operation = "setReadOnly",
+                Files = new List<string> { "Fallout.ini" }
+            }
+        };
+
+        Assert.True(ConfigValidator.IsValid(cfg));
+    }
+
 }

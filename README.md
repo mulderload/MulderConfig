@@ -123,11 +123,13 @@ Operations run in JSON order (optional `when`). Supported operations:
 - `rename` / `move` (requires `source`, `target`)
 - `copy` (requires `source`, `target`)
 - `delete` (requires `source`)
+- `setReadOnly` (requires `files`)
+- `removeReadOnly` (requires `files`)
 - `replaceLine` (requires `files`, `pattern`, `replacement`)
 - `removeLine` (requires `files`, `pattern`)
 - `replaceText` (requires `files`, `search`, `replacement`)
 
-Paths are relative to the game directory (app startup directory).
+Paths are relative to the game directory (app startup directory). Windows environment variables like `%USERPROFILE%` are expanded.
 
 ## actions.launch
 

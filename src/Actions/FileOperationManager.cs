@@ -17,6 +17,14 @@ public class FileOperationManager
             {
                 switch ((action.Operation ?? string.Empty).ToLower())
                 {
+                    case "setreadonly":
+                        ExecuteSetReadOnly(action, isReadOnly: true);
+                        break;
+
+                    case "removereadonly":
+                        ExecuteSetReadOnly(action, isReadOnly: false);
+                        break;
+
                     case "rename":
                     case "move":
                         ExecuteMove(action);
@@ -66,6 +74,34 @@ public class FileOperationManager
             return Path.GetFullPath(path);
 
         return Path.GetFullPath(Path.Combine(Application.StartupPath, path));
+    }
+
+    private static void ExecuteSetReadOnly(OperationAction action, bool isReadOnly)
+    {
+        if (action.Files == null || action.Files.Count == 0)
+            throw new InvalidOperationException("Missing 'files' for SetReadOnly/RemoveReadOnly.");
+
+        foreach (var f in action.Files)
+        {
+            if (string.IsNullOrWhiteSpace(f))
+                continue;
+
+            var path = ResolvePath(f);
+
+            // Idempotent behavior: if the target doesn't exist, we do nothing.
+            if (!File.Exists(path))
+                continue;
+
+            var attrs = File.GetAttributes(path);
+            var readOnlyBit = FileAttributes.ReadOnly;
+
+            var newAttrs = isReadOnly
+                ? (attrs | readOnlyBit)
+                : (attrs & ~readOnlyBit);
+
+            if (newAttrs != attrs)
+                File.SetAttributes(path, newAttrs);
+        }
     }
 
     private static void ExecuteMove(OperationAction action)

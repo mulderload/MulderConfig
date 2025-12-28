@@ -125,6 +125,12 @@ public class ConfigValidator
                     return false;
             }
 
+            if (operation is "setreadonly" or "removereadonly")
+            {
+                if (op.Files == null || op.Files.Count == 0)
+                    return false;
+            }
+
             if (operation is "replaceline" or "removeline")
             {
                 if (op.Files == null || op.Files.Count == 0)
