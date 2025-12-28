@@ -47,6 +47,7 @@ jobs:
                -c Release `
                -r win-x64 `
                --self-contained false `
+               -p:SelfContained=false `
                -p:PublishSingleFile=true `
                -p:DebugType=none `
                -p:Version=${{ steps.generate_version.outputs.version }} `
