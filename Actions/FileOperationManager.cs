@@ -112,13 +112,34 @@ public class FileOperationManager
         var sourcePath = ResolvePath(action.Source);
         var targetPath = ResolvePath(action.Target);
 
-        if (!File.Exists(sourcePath))
+        var targetParent = Path.GetDirectoryName(targetPath);
+        if (!string.IsNullOrWhiteSpace(targetParent))
+            Directory.CreateDirectory(targetParent);
+
+        if (File.Exists(sourcePath))
+        {
+            if (File.Exists(targetPath))
+                File.Delete(targetPath);
+            else if (Directory.Exists(targetPath))
+                Directory.Delete(targetPath, recursive: true);
+
+            File.Move(sourcePath, targetPath);
             return;
+        }
 
-        if (File.Exists(targetPath))
-            File.Delete(targetPath);
+        if (Directory.Exists(sourcePath))
+        {
+            if (Directory.Exists(targetPath))
+                Directory.Delete(targetPath, recursive: true);
+            else if (File.Exists(targetPath))
+                File.Delete(targetPath);
 
-        File.Move(sourcePath, targetPath);
+            Directory.Move(sourcePath, targetPath);
+            return;
+        }
+
+        // Idempotent behavior: if the target doesn't exist, we do nothing.
+        return;
     }
 
     private static void ExecuteCopy(OperationAction action)
