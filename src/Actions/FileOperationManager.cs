@@ -54,13 +54,27 @@ public class FileOperationManager
         }
     }
 
+    private static string ResolvePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return path;
+
+        // Expand Windows env vars like %USERPROFILE%
+        path = Environment.ExpandEnvironmentVariables(path);
+
+        if (Path.IsPathRooted(path))
+            return Path.GetFullPath(path);
+
+        return Path.GetFullPath(Path.Combine(Application.StartupPath, path));
+    }
+
     private static void ExecuteMove(OperationAction action)
     {
         if (string.IsNullOrWhiteSpace(action.Source) || string.IsNullOrWhiteSpace(action.Target))
             throw new InvalidOperationException("Missing 'source' or 'target' for rename/move.");
 
-        var sourcePath = Path.Combine(Application.StartupPath, action.Source);
-        var targetPath = Path.Combine(Application.StartupPath, action.Target);
+        var sourcePath = ResolvePath(action.Source);
+        var targetPath = ResolvePath(action.Target);
 
         if (!File.Exists(sourcePath))
             return;
@@ -76,8 +90,8 @@ public class FileOperationManager
         if (string.IsNullOrWhiteSpace(action.Source) || string.IsNullOrWhiteSpace(action.Target))
             throw new InvalidOperationException("Missing 'source' or 'target' for copy.");
 
-        var sourcePath = Path.Combine(Application.StartupPath, action.Source);
-        var targetPath = Path.Combine(Application.StartupPath, action.Target);
+        var sourcePath = ResolvePath(action.Source);
+        var targetPath = ResolvePath(action.Target);
 
         if (!File.Exists(sourcePath))
             return;
@@ -90,7 +104,7 @@ public class FileOperationManager
         if (string.IsNullOrWhiteSpace(action.Source))
             throw new InvalidOperationException("Missing 'source' for delete.");
 
-        var sourcePath = Path.Combine(Application.StartupPath, action.Source);
+        var sourcePath = ResolvePath(action.Source);
         if (File.Exists(sourcePath))
             File.Delete(sourcePath);
     }
@@ -132,10 +146,10 @@ public class FileOperationManager
             if (string.IsNullOrWhiteSpace(f))
                 continue;
 
-            var filePath = Path.Combine(Application.StartupPath, f);
+            var filePath = ResolvePath(f);
             if (!File.Exists(filePath))
             {
-                MessageBox.Show($"File not found: {f}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"File not found: {filePath}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 continue;
             }
 
